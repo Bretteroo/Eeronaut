@@ -91,7 +91,7 @@ You can make your own themes, or just ask your robot to do it.
 
 Check [THEMES.md](THEMES.md) for more info.
 
-<details>
+<details open>
 <summary><b>Eerish</b></summary>
 <img src="docs/screenshots/eerish/eerish-spread.png" alt="Eerish theme, Dashboard">
 
