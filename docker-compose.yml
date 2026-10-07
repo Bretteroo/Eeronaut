@@ -1,0 +1,22 @@
+services:
+  eeronaut:
+    image: ghcr.io/bretteroo/eeronaut:latest
+    container_name: eeronaut
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      # The port Eeronaut listens on. With host networking this is the port
+      # on this machine itself, so pick one nothing else is using.
+      EERONAUT_PORT: "3340"
+
+      # Optional. Sets the Eeronaut password here instead of choosing one on
+      # the first visit, and takes priority over any password chosen there.
+      # While it is set, the password can only be changed by changing it here.
+      # EERONAUT_UI_PASSWORD: "<a password of 8 characters or more>"
+
+    volumes:
+      # Holds the Eeronaut password, the Eero session, and the node cache
+      # between restarts and upgrades.
+      # Replace </path/to/data> with a folder on this machine. Recommended:
+      # /home/<username>/.config/eeronaut:/data
+      - </path/to/data>:/data

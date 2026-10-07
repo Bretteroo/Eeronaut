@@ -1,0 +1,30 @@
+{
+  "engine": "1.0",
+  "id": "liquid_glass",
+  "version": "1.0.0",
+  "title": "Liquid Glass",
+  "description": "Frosted, translucent panels over a soft gradient, with the navigation floating along the bottom.",
+  "screenshots": {
+    "light": "screenshot-light.png",
+    "dark": "screenshot-dark.png"
+  },
+  "favicon": "assets/favicon.png",
+  "layout": {
+    "navigation": "bottom",
+    "density": "comfortable",
+    "pages": {
+      "dashboard": {
+        "order": [
+          "glance",
+          "connection",
+          "mesh"
+        ],
+        "wide": [
+          "glance",
+          "connection"
+        ]
+      }
+    },
+    "collapse": "menu"
+  }
+}

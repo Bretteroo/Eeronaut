@@ -1,0 +1,40 @@
+Pictures in this theme, supplied by the author and under no third-party
+license. Each is used as it was supplied, re-encoded as JPEG.
+
+One picture per page, each about what that page is for, so moving between
+pages changes what is over the side.
+
+page-dashboard.jpg   Dashboard
+  A yacht's helm at dawn: a teak wheel, brass instruments, open water beyond.
+page-internet.jpg    Internet
+  One white motor yacht far out on deep blue, under a clean horizon.
+page-network.jpg     Network
+  Looking up a mast at rigging crossing an overcast sky.
+page-clients.jpg     Clients
+  A marina of white yachts in their berths, from above.
+page-profiles.jpg    Profiles
+  A varnished companionway of cabin doors with brass name plates.
+page-topology.jpg    Topology
+  An old nautical chart with a compass rose and a pair of dividers.
+page-airtime.jpg     Airtime
+  A radar dome and antennas at the masthead against a clear sky.
+page-security.jpg    Security
+  A harbor mouth at dusk, a lighthouse at the end of the breakwater.
+page-insights.jpg    Insights
+  A navigator's table: a logbook, a sextant, and rules laid across a chart.
+page-settings.jpg    Settings
+  An engineering panel of brass switches and gauges in a mahogany bulkhead.
+
+brand.png
+  The project's own mark — an eero in a captain's cap. Supplied by the
+  author, not a third-party asset and under no third-party license.
+
+favicon.png
+  The same mark, at tab-icon size, likewise supplied by the author.
+
+check.svg, chevron.svg
+  Drawn for this theme: the tick inside a checked box and the chevron on a
+  menu.
+
+Fonts are in fonts/, each with its license beside it. Cormorant Garamond and
+Jost are both under the SIL Open Font License.

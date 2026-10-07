@@ -1,0 +1,41 @@
+# Routine version updates, once a month. Security alerts and their fixes are
+# separate and immediate (switched on in the repository's settings); this is
+# what keeps everything else from drifting, and the only thing that watches
+# the Docker base image.
+#
+# Minor and patch releases are grouped, so each area opens one pull request a
+# month rather than one per package. A major release gets its own.
+version: 2
+updates:
+  # The server: the pinned versions in app/backend/requirements.txt.
+  - package-ecosystem: pip
+    directory: /app/backend
+    schedule:
+      interval: monthly
+    groups:
+      python:
+        update-types: [minor, patch]
+
+  # The interface: app/frontend/package.json and its lock file.
+  - package-ecosystem: npm
+    directory: /app/frontend
+    schedule:
+      interval: monthly
+    groups:
+      interface:
+        update-types: [minor, patch]
+
+  # The Python and Node base images in the Dockerfile.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+
+  # The actions the image workflow uses.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        update-types: [minor, patch]

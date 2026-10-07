@@ -1,0 +1,15 @@
+{
+  "engine": "1.0",
+  "id": "harbor",
+  "version": "1.0.0",
+  "title": "Harbor",
+  "description": "The original Eeronaut theme, used for most of its development.  A dark rail, white cards, and a clear blue for anything you can press.",
+  "screenshots": {
+    "light": "screenshot-light.png",
+    "dark": "screenshot-dark.png"
+  },
+  "layout": {
+    "navigation": "rail",
+    "density": "comfortable"
+  }
+}

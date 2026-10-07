@@ -1,0 +1,1014 @@
+/* Winksys
+ *
+ * A fond impression of the setup pages home routers shipped with in the
+ * early 2000s: a fixed-width page on a gray ground, an indigo band across
+ * the top, two rows of tabs, and every section laid out the same way — its
+ * name in a black bar down the left, the form in the middle, and a column of
+ * help running down the right in indigo.
+ *
+ * The colors are read off an archived copy of one of those pages: #6666cc
+ * for the indigo, #e7e7e7 for the gutter, black for the bars. The type is
+ * Arial, as it was, at sizes that pass a contrast audit rather than the
+ * eight points it was set in — the look is the joke, not the squinting.
+ *
+ * No logo, wordmark, picture, or word from any router maker's firmware is
+ * used here, and this project is unaffiliated with any of them.
+ */
+
+/* ------------------------------------------------------------------ tokens */
+
+:root {
+  color-scheme: light;
+
+  --indigo: #6666cc;
+  --indigo-deep: #4d4db3;
+  --bar: #000000;
+  --bar-ink: #ffffff;
+  --gutter: #e7e7e7;
+  --ground: #c8c8c8;
+  --help: #6666cc;
+  --help-ink: #ffffff;
+  --bevel-light: #ffffff;
+  --bevel-dark: #808080;
+  --bevel-darker: #404040;
+  --button: #e0e0e0;
+  --button-ink: #000000;
+
+  /* Anything you can press. A deeper indigo than the bars, because it is set
+     as words on white as often as it is a fill, and the bars' own indigo is
+     4.8:1 on white — enough for a band, thin for a link. */
+  --color-accent: #3a3aa8;
+  --color-accent-ink: #33339c;
+  --color-accent-deep: #26267a;
+  --color-accent-wash: rgba(102, 102, 204, 0.14);
+  --color-warn-wash: rgba(179, 89, 0, 0.10);
+
+  --color-ok: #007a00;
+  --color-warn: #b35900;
+  --color-bad: #c00000;
+  --color-idle: #7a7a7a;
+
+  --series-1: #3a3aa8;
+  --series-2: #007b7b;
+
+  --signal-good: #26267a;
+  --signal-okay: #6666cc;
+  --signal-poor: #c2c2eb;
+
+  --color-canvas: #d4d4d4;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0f0f0;
+  --color-line: #c8c8c8;
+  --color-line-strong: #8c8c8c;
+
+  --color-ink: #000000;
+  --color-ink-2: #333333;
+  --color-ink-3: #595959;
+
+  /* Only used by the rail, which this theme does not draw; set so that a
+     rail-only part never shows the gray fallback. */
+  --color-rail: #000000;
+  --color-rail-hover: #222222;
+  --color-rail-ink: #ffffff;
+  --color-rail-2: #333333;
+  --color-rail-ink-dim: #bfbfbf;
+
+  --radius-card: 0;
+  --radius-control: 0;
+  /* And every other rounded box: nothing on those pages had a curve. */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  /* The edge where a section's form meets its help, shaded from the white
+     into the indigo as if the help column stood a little proud. */
+  --help-edge: linear-gradient(to right,
+    color-mix(in srgb, var(--help), #000 60%) 0 1px,
+    color-mix(in srgb, var(--help), #000 90%) 1px 2px,
+    color-mix(in srgb, var(--help), #000 65%) 2px 4px,
+    color-mix(in srgb, var(--help), #000 50%) 4px 5px,
+    color-mix(in srgb, var(--help), #000 40%) 5px 6px,
+    color-mix(in srgb, var(--help), #000 32%) 6px 8px,
+    color-mix(in srgb, var(--help), #000 10%) 8px 10px,
+    transparent 10px);
+  --font-sans: Arial, Helvetica, "Liberation Sans", "Nimbus Sans", sans-serif;
+
+  /* The two columns every section shares, so that stacked sections line up
+     into one long form the way those pages did. */
+  --gutter-w: 164px;
+  --page-w: 1040px;
+  /* The help column's share of the space beside the gutter: about what it
+     had on those pages, where it was the narrower of the two. */
+  --help-frac: 0.24;
+  --help-w: calc((var(--page-w) - var(--gutter-w)) * var(--help-frac));
+}
+
+/* The same page after dark: the bars stay black, the indigo, and the grays
+   come down, and the form goes to a near-black with pale gray words. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --indigo: #3d3d8f;
+    --indigo-deep: #30307a;
+    --gutter: #2b2b2b;
+    --ground: #0e0e0e;
+    --help: #34347a;
+    --bevel-light: #6a6a6a;
+    --bevel-dark: #1a1a1a;
+    --bevel-darker: #000000;
+    --button: #3a3a3a;
+    --button-ink: #f0f0f0;
+
+    --color-accent: #9a9ae0;
+    --color-accent-ink: #c6c6f2;
+    --color-accent-deep: #dcdcf8;
+    --color-accent-wash: rgba(154, 154, 224, 0.18);
+    --color-warn-wash: rgba(230, 150, 60, 0.14);
+
+    --color-ok: #4cc24c;
+    --color-warn: #e69a3c;
+    --color-bad: #ff6b6b;
+    --color-idle: #8c8c8c;
+
+    --series-1: #9a9ae0;
+    --series-2: #4cc2c2;
+    --signal-good: #c6c6f2;
+    --signal-okay: #8c8cd9;
+    --signal-poor: #3d3d8f;
+
+    --color-canvas: #242424;
+    --color-surface: #1c1c1c;
+    --color-surface-2: #262626;
+    --color-line: #3a3a3a;
+    --color-line-strong: #6a6a6a;
+
+    --color-ink: #e7e7e7;
+    --color-ink-2: #c8c8c8;
+    --color-ink-3: #a6a6a6;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --indigo: #3d3d8f;
+  --indigo-deep: #30307a;
+  --gutter: #2b2b2b;
+  --ground: #0e0e0e;
+  --help: #34347a;
+  --bevel-light: #6a6a6a;
+  --bevel-dark: #1a1a1a;
+  --bevel-darker: #000000;
+  --button: #3a3a3a;
+  --button-ink: #f0f0f0;
+
+  --color-accent: #9a9ae0;
+  --color-accent-ink: #c6c6f2;
+  --color-accent-deep: #dcdcf8;
+  --color-accent-wash: rgba(154, 154, 224, 0.18);
+  --color-warn-wash: rgba(230, 150, 60, 0.14);
+
+  --color-ok: #4cc24c;
+  --color-warn: #e69a3c;
+  --color-bad: #ff6b6b;
+  --color-idle: #8c8c8c;
+
+  --series-1: #9a9ae0;
+  --series-2: #4cc2c2;
+  --signal-good: #c6c6f2;
+  --signal-okay: #8c8cd9;
+  --signal-poor: #3d3d8f;
+
+  --color-canvas: #242424;
+  --color-surface: #1c1c1c;
+  --color-surface-2: #262626;
+  --color-line: #3a3a3a;
+  --color-line-strong: #6a6a6a;
+
+  --color-ink: #e7e7e7;
+  --color-ink-2: #c8c8c8;
+  --color-ink-3: #a6a6a6;
+}
+
+/* -------------------------------------------------------------- the page */
+
+body {
+  background: var(--ground);
+  font-size: 13px;
+}
+
+/* One fixed-width page in the middle of the window, as those were: the
+   navigation, the header, and every section inside the same column. */
+[data-part="shell"] > div:has(> [data-part="main"]) {
+  width: 100%;
+  max-width: var(--page-w);
+  margin-inline: auto;
+  background: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--bar), 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* ------------------------------------------------------------ the masthead
+
+   The navigation is a grid: the band across the top, then the open
+   section's name in a black block down the left beside two rows of tabs. */
+[data-part="nav"][data-placement="tabs"] {
+  display: grid;
+  grid-template-columns: var(--gutter-w) minmax(0, 1fr);
+  border: 0;
+  background: var(--bar);
+}
+
+/* Taller than it needs to be, as the maker's band was, with the mark
+   centered in it and the firmware version down in the bottom corner, and the band
+   shaded darker along its foot where it meets the black. */
+[data-part="nav-masthead"] {
+  grid-column: 1 / -1;
+  align-items: stretch !important;
+  min-height: 72px;
+  padding: 10px 12px 12px !important;
+  background: linear-gradient(to bottom,
+    var(--indigo) 0 calc(100% - 9px),
+    color-mix(in srgb, var(--indigo), #000 4%) calc(100% - 9px) calc(100% - 8px),
+    color-mix(in srgb, var(--indigo), #000 10%) calc(100% - 8px) calc(100% - 7px),
+    color-mix(in srgb, var(--indigo), #000 17%) calc(100% - 7px) calc(100% - 6px),
+    color-mix(in srgb, var(--indigo), #000 24%) calc(100% - 6px) calc(100% - 5px),
+    color-mix(in srgb, var(--indigo), #000 27%) calc(100% - 5px) calc(100% - 3px),
+    #000 calc(100% - 3px) calc(100% - 2px),
+    color-mix(in srgb, var(--indigo), #000 75%) calc(100% - 2px) calc(100% - 1px),
+    #000 calc(100% - 1px));
+  color: var(--bar-ink);
+}
+[data-part="nav-masthead"] > [data-part="nav-brand"] { align-self: center; }
+[data-part="nav-masthead"] > [data-part="nav-extras"] { align-self: flex-end; }
+
+/* The wordmark where the maker's went: the program's name in a wide, heavy
+   face with a line under it, white on the band. The interface's own mark and
+   name are hidden; the link keeps its accessible name, which is the page it
+   goes to, and on a phone the menu it opens keeps its own. */
+[data-part="nav-brand"] img,
+[data-part="nav-brand"] span { display: none !important; }
+[data-part="nav-brand"]::before {
+  content: "";
+  flex: none;
+  /* No wider than the gutter below it, as the maker's mark never was: it
+     sat over the left-hand column and left the rest of the band clear. */
+  width: calc(var(--gutter-w) - 20px);
+  height: 30px;
+  background: url(assets/wordmark.png) left center / contain no-repeat;
+}
+
+[data-part="nav-extras"],
+[data-part="nav-extras"] a,
+[data-part="nav-extras"] button {
+  color: var(--bar-ink);
+}
+/* The firmware version, where those pages printed theirs. */
+[data-part="nav-firmware"] {
+  align-self: flex-end;
+  padding: 0 !important;
+  font-size: 10px !important;
+  font-weight: 400;
+  color: var(--bar-ink) !important;
+  text-decoration: none;
+}
+[data-part="nav-firmware"]:hover { text-decoration: underline; }
+[data-part="nav-extras"] [data-part="network-switcher"] {
+  background: var(--bar);
+  border-color: var(--bar);
+  color: var(--bar-ink);
+}
+
+/* The product bar, between the band and the tabs: what the thing is, set
+   bold and white against the right-hand end of the indigo, and its model in
+   a black box of its own at the very end. */
+[data-part="nav-product"] {
+  grid-column: 2;
+  grid-row: 2;
+  justify-content: flex-end;
+  min-height: 34px;
+  background: var(--indigo);
+  border-top: 1px solid var(--bar);
+}
+[data-part="nav-product-line"] {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--bar-ink);
+}
+[data-part="nav-product-model"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  padding: 0 14px;
+  background: var(--bar);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--bar-ink);
+}
+
+/* The open section, large and white in its black block, down the left of
+   the product bar and both rows of tabs. */
+[data-part="nav-section"] {
+  grid-column: 1;
+  grid-row: 2 / span 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--bar-ink);
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* The first row: every section on the black strip, the open one lifted into
+   the indigo as if it were the front tab of a card index. */
+[data-part="nav-tabs"] {
+  grid-column: 2;
+  grid-row: 3;
+  justify-content: space-between;
+  min-height: 40px;
+  background: linear-gradient(to bottom,
+    #787877 0 1px, #bebebf 1px 2px, #bdbdc8 2px 3px, #9191a7 3px 4px,
+    #6e6e8c 4px 5px, #46466b 5px 6px, #23234f 6px 7px, #0b0b3b 7px 8px,
+    #000032 8px 9px, #000033 9px 10px, var(--bar) 10px);
+  /* Three rows of black between the product bar and the tabs, as there. */
+  border-top: 3px solid var(--bar);
+}
+/* Each tab is lit along its top edge, a pixel at a time, as the tab
+   pictures on those pages were: a gray highlight falling off to black on the
+   back tabs, and a lighter line over the indigo on the front one. */
+/* Cells as wide as their names up to a limit, spread across the row, so the
+   longest name wraps onto a second line as it did there and the rest stay
+   on one. The row carries the back tabs' lit edge too, so the gaps between
+   cells read as more of the same tab rather than as holes. */
+[data-part="nav-tab"] {
+  flex: 1 1 auto;
+  max-width: 11.5em;
+  line-height: 1.15;
+  justify-content: center;
+  padding: 10px 6px 0 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--bar-ink);
+  text-align: center;
+  text-decoration: none;
+  background: linear-gradient(to bottom,
+    #787877 0 1px, #bebebf 1px 2px, #bdbdc8 2px 3px, #9191a7 3px 4px,
+    #6e6e8c 4px 5px, #46466b 5px 6px, #23234f 6px 7px, #0b0b3b 7px 8px,
+    #000032 8px 9px, #000033 9px 10px, var(--bar) 10px);
+}
+[data-part="nav-tab"]:hover { text-decoration: underline; }
+[data-part="nav-tab"][aria-current] {
+  background: linear-gradient(to bottom,
+    #45458a 0 1px, #5f5fbe 1px 2px, #6868d1 2px 3px, var(--indigo) 3px);
+}
+
+/* The second row: the open section's pages, divided by rules, on indigo. */
+/* The pages sit well apart with a heavy white bar between each. Those pages
+   drew the others paler than the open one, but on this indigo only white
+   is readable at this size, so every page is white and the open one bold. */
+[data-part="nav-subtabs"] {
+  grid-column: 2;
+  grid-row: 4;
+  min-height: 22px;
+  padding: 0 8px;
+  background: var(--indigo);
+}
+[data-part="nav-subtabs"] [data-part="nav-link"] {
+  position: relative;
+  padding: 3px 26px !important;
+  font-size: 11px !important;
+  color: var(--bar-ink);
+  text-decoration: none;
+}
+[data-part="nav-subtabs"] [data-part="nav-link"] + [data-part="nav-link"]::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 5px;
+  bottom: 5px;
+  border-left: 2px solid var(--bar-ink);
+}
+[data-part="nav-subtabs"] [data-part="nav-link"][aria-current="page"] {
+  color: var(--bar-ink);
+  font-weight: 700;
+}
+[data-part="nav-subtabs"] [data-part="nav-link"]:hover { text-decoration: underline; }
+
+/* ------------------------------------------------------------- the header
+
+   None. The tabs already say the section and the page, and those pages had
+   no search and no status line between the tabs and the form. Only the
+   outage warning is left, which is the header's second row and shows only
+   when there is an outage to warn about. */
+[data-part="header"] {
+  background: none;
+  border: 0;
+}
+[data-part="header"] > div:first-child { display: none; }
+[data-part="page-title"] {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+[data-part="search"] {
+  border-radius: 0;
+  background: var(--color-surface);
+  border-color: var(--color-line-strong);
+}
+
+/* --------------------------------------------------------- the sections
+
+   One column of sections, butted together so their gutters and their help
+   columns run the full height of the page. Each is a grid: the name in the
+   gutter on the left, then the form and the help beside it. */
+[data-part="main"] {
+  /* Room at the top for the gray strip under the tabs, which ends in a
+     shadow over the form and the help and then a little white before the
+     first section, as it did on those pages. */
+  padding: 15px 0 0 !important;
+  /* The three columns drawn behind the sections as well, so on a page with
+     one short section they carry on down to the foot rather than stopping
+     where the section does. */
+  background:
+    linear-gradient(to bottom,
+      var(--gutter) 0 6px,
+      color-mix(in srgb, var(--gutter), #000 4%) 6px 7px,
+      color-mix(in srgb, var(--gutter), #000 15%) 7px 8px,
+      color-mix(in srgb, var(--gutter), #000 27%) 8px 9px,
+      var(--color-surface) 9px 15px)
+      right top / calc(100% - var(--gutter-w)) 15px no-repeat,
+    linear-gradient(var(--gutter), var(--gutter)) left top / var(--gutter-w) 15px no-repeat,
+    var(--help-edge) right calc(var(--help-w) - 10px) top 15px / 10px 100% no-repeat,
+    linear-gradient(to right,
+      var(--gutter) 0 var(--gutter-w),
+      var(--color-surface) var(--gutter-w) calc(100% - var(--help-w)),
+      var(--help) calc(100% - var(--help-w)) 100%);
+}
+[data-part="page"] {
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 0 !important;
+}
+[data-part="page"] > * { grid-column: 1 / -1 !important; }
+
+[data-part="card"] {
+  display: grid;
+  grid-template-columns: var(--gutter-w) minmax(0, 1fr);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--color-surface);
+}
+[data-part="card-header"] {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 10px 0 10px !important;
+  border: 0;
+  background: var(--gutter);
+}
+[data-part="card-title"] {
+  justify-content: flex-end;
+  padding: 4px 10px;
+  background: var(--bar);
+  color: var(--bar-ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+[data-part="card-title"] > span { white-space: normal; }
+/* No glyph beside the name: those bars were words and nothing else. */
+[data-part="card-title"] > svg { display: none; }
+/* Whatever else the header carries — a period picker, a filter — sits in the
+   gutter under the name, right-aligned with it. */
+[data-part="card-header"] > :not([data-part="card-title"]) {
+  align-self: flex-end;
+  margin-right: 10px;
+  max-width: calc(var(--gutter-w) - 16px);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+[data-part="card-columns"],
+[data-part="card"] > [data-part="card-body"] {
+  grid-column: 2;
+}
+[data-part="card-body"] > div { padding: 14px 28px; }
+/* Sections are divided by a short rule across the form alone, stopping
+   short of both edges; the gutter and the help run on unbroken. */
+[data-part="card-columns"] > [data-part="card-body"],
+[data-part="card"] > [data-part="card-body"] {
+  background: linear-gradient(var(--color-line-strong), var(--color-line-strong))
+    center bottom / calc(100% - 40px) 1px no-repeat;
+}
+
+/* The help column: every explanation in the section, in indigo, with the
+   name of what it explains in bold in front of it. */
+[data-part="card-help"] {
+  padding: 12px 14px;
+  background: var(--help);
+  color: var(--help-ink);
+  font-size: 12px;
+  line-height: 1.45;
+  padding-left: 24px !important;
+  background: var(--help-edge), var(--help);
+}
+[data-part="help-entry"] + [data-part="help-entry"] { margin-top: 10px; }
+[data-part="help-term"] { font-weight: 700; }
+/* The name in front of an explanation is the control's own label, drawn a
+   second time — which copies any mark it carries, like the one that says a
+   change restarts the radios. The mark belongs by the control, and a second
+   copy here is a second button to tab through, so only the words come. */
+[data-part="help-term"] button,
+[data-part="help-term"] svg,
+[data-part="help-term"] [data-plus-mark],
+[data-part="help-term"] [data-part="reboot-mark"] {
+  display: none !important;
+}
+[data-part="help-term"] * { display: inline; }
+[data-part="card-help"] a { color: var(--help-ink); text-decoration: underline; }
+
+/* A tile of figures is a boxed cell of the form, not a card of its own. */
+[data-part="stat"] {
+  border: 1px solid var(--color-line-strong);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* The foot of the page: black under the gutter, indigo under the form and
+   black again under the help, which is where those pages kept their buttons
+   and their maker's mark. The buttons are not needed, since each section
+   here saves by itself; the mark's corner holds the About button. */
+[data-part="nav-foot"] {
+  min-height: 52px;
+  background: linear-gradient(to right,
+    var(--bar) 0 var(--gutter-w),
+    var(--indigo) var(--gutter-w) calc(100% - var(--help-w)),
+    var(--bar) calc(100% - var(--help-w)) 100%);
+}
+[data-part="nav-foot"] [data-part="nav-about-button"] {
+  width: var(--help-w);
+  justify-content: center;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  font-style: italic;
+  color: var(--bar-ink) !important;
+  text-decoration: none;
+}
+[data-part="nav-foot"] [data-part="nav-about-button"]:hover { text-decoration: underline; }
+
+/* ----------------------------------------------------------------- words */
+
+/* The interface's small capitals are bold words here, as field names were. */
+.micro-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-ink);
+}
+/* A field's name in plain type, as the names beside those forms were. */
+[data-part="field-label"] { font-weight: 400; }
+[data-part="card-body"] p:not(td p):not(th p) { font-size: 13px; }
+
+/* -------------------------------------------------------------- controls
+
+   Windows 95, after 95.css (MIT; see assets/LICENSE-95css.txt): raised
+   silver buttons with a two-pixel bevel, sunken white fields, a dropdown
+   with its own little button, and a thirteen-pixel sunken checkbox with a
+   pixel tick. The bevels are that stylesheet's, and so are the glyphs in
+   assets/, taken out of it as files because a theme serves nothing inline.
+
+   The face and the bevel colors are tokens, so the dark appearance can take
+   the lights down on the same shapes. */
+
+:root {
+  --face: #c0c0c0;
+  --face-ink: #000000;
+  --face-ink-dim: #404040;
+  --hi: #ffffff;
+  --hi2: #dfdfdf;
+  --lo: #808080;
+  --lo2: #0a0a0a;
+  --field: #ffffff;
+  --field-ink: #000000;
+  --field-off: #c0c0c0;
+  --pick: #000080;
+  --pick-ink: #ffffff;
+  --img-check: url(assets/check.svg);
+  --img-select: url(assets/select.svg);
+  --img-select-down: url(assets/select-down.svg);
+  --img-radio: url(assets/radio.svg);
+  --img-radio-dot: url(assets/radio-dot.svg);
+
+  --raised: inset -1px -1px var(--lo2), inset 1px 1px var(--hi),
+            inset -2px -2px var(--lo), inset 2px 2px var(--hi2);
+  --pressed: inset -1px -1px var(--hi), inset 1px 1px var(--lo2),
+             inset -2px -2px var(--hi2), inset 2px 2px var(--lo);
+  --sunken: inset -1px -1px var(--hi), inset 1px 1px var(--lo),
+            inset -2px -2px var(--hi2), inset 2px 2px var(--lo2);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --face: #3a3a3a;
+    --face-ink: #f0f0f0;
+    --face-ink-dim: #c8c8c8;
+    --hi: #6a6a6a;
+    --hi2: #505050;
+    --lo: #1a1a1a;
+    --lo2: #000000;
+    --field: #1c1c1c;
+    --field-ink: #e7e7e7;
+    --field-off: #2e2e2e;
+    --pick: #3d3d8f;
+    --img-check: url(assets/check-dark.svg);
+    --img-select: url(assets/select-dark.svg);
+    --img-select-down: url(assets/select-down-dark.svg);
+    --img-radio: url(assets/radio-dark.svg);
+    --img-radio-dot: url(assets/radio-dot-dark.svg);
+  }
+}
+:root[data-theme="dark"] {
+  --face: #3a3a3a;
+  --face-ink: #f0f0f0;
+  --face-ink-dim: #c8c8c8;
+  --hi: #6a6a6a;
+  --hi2: #505050;
+  --lo: #1a1a1a;
+  --lo2: #000000;
+  --field: #1c1c1c;
+  --field-ink: #e7e7e7;
+  --field-off: #2e2e2e;
+  --pick: #3d3d8f;
+  --img-check: url(assets/check-dark.svg);
+  --img-select: url(assets/select-dark.svg);
+  --img-select-down: url(assets/select-down-dark.svg);
+  --img-radio: url(assets/radio-dark.svg);
+  --img-radio-dot: url(assets/radio-dot-dark.svg);
+}
+
+/* Every button in the page, the header, a drawer, or a dialog is a Windows
+   button — the interface's text-link actions included, since that desktop
+   had no such thing as a word you clicked in a form. What is left out is
+   what is not a button to look at: a switch (drawn as a checkbox below), the
+   entries of an open menu or list, the eero Plus corner, a tile in the mesh
+   diagram, the layer that dims the page, the search box (a field) and a
+   column heading (drawn as a header cell with the table). */
+:is([data-part="main"], [data-part="header"], [data-part="drawer-panel"],
+    [data-part="modal"], [data-part="nav-extras"])
+  button:not([role="switch"]):not([role="menuitem"]):not([role="option"]):not([data-part="sash"]):not([data-part="tile"]):not([data-part="scrim"]):not([data-part="search"]):not(.sortable):not([data-part="avatar"]):not([data-part="editable"]):not([data-part="map-client"]):not([data-part="table-fold-head"]),
+[data-part="link-button"] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--face) !important;
+  color: var(--face-ink) !important;
+  /* Quieter words inside a button, a tile's detail line, are on the face
+     now and not the page, so they are dimmed against the face. */
+  --color-ink-2: var(--face-ink-dim);
+  --color-ink-3: var(--face-ink-dim);
+  box-shadow: var(--raised) !important;
+  font-family: var(--font-sans);
+  font-weight: 400 !important;
+  text-decoration: none !important;
+  padding-inline: 12px;
+  min-height: 23px;
+}
+:is([data-part="main"], [data-part="header"], [data-part="drawer-panel"],
+    [data-part="modal"], [data-part="nav-extras"])
+  button:not([role="switch"]):not([role="menuitem"]):not([role="option"]):not([data-part="sash"]):not([data-part="tile"]):not([data-part="scrim"]):not([data-part="search"]):not(.sortable):not([data-part="avatar"]):not([data-part="editable"]):not([data-part="map-client"]):not([data-part="table-fold-head"]):not(:disabled):active,
+[data-part="link-button"]:active,
+/* A button that stays down — the mode of the LAN, the appearance, the
+   window of a chart — is drawn pressed in, the way a toolbar's were. */
+:is([data-part="main"], [data-part="drawer-panel"], [data-part="modal"])
+  button[aria-pressed="true"],
+:is([data-part="main"], [data-part="drawer-panel"], [data-part="modal"])
+  button[aria-selected="true"],
+:is([data-part="main"], [data-part="drawer-panel"], [data-part="modal"])
+  button[role="radio"][aria-checked="true"] {
+  box-shadow: var(--pressed) !important;
+  background: var(--hi2) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) :is([data-part="main"], [data-part="drawer-panel"],
+    [data-part="modal"]) :is(button[aria-pressed="true"], button[aria-selected="true"], button[role="radio"][aria-checked="true"]) {
+    background: #2a2a2a !important;
+  }
+}
+:root[data-theme="dark"] :is([data-part="main"], [data-part="drawer-panel"],
+  [data-part="modal"]) :is(button[aria-pressed="true"], button[aria-selected="true"], button[role="radio"][aria-checked="true"]) {
+  background: #2a2a2a !important;
+}
+/* Disabled the way that desktop did it: gray words with a white shadow cut
+   into the face. */
+:is([data-part="main"], [data-part="header"], [data-part="drawer-panel"],
+    [data-part="modal"], [data-part="nav-extras"])
+  button:not([role="switch"]):not([role="menuitem"]):not([role="option"]):not([data-part="sash"]):not([data-part="tile"]):not([data-part="scrim"]):not([data-part="search"]):not(.sortable):not([data-part="avatar"]):not([data-part="editable"]):not([data-part="map-client"]):not([data-part="table-fold-head"]):disabled {
+  opacity: 1 !important;
+  color: var(--lo) !important;
+  text-shadow: 1px 1px 0 var(--hi);
+}
+button:focus-visible {
+  outline: 1px dotted var(--face-ink) !important;
+  outline-offset: -4px !important;
+}
+
+/* Fields: sunken and white, no border, square. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+textarea,
+select,
+[data-part="search"] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: var(--field) !important;
+  color: var(--field-ink);
+  box-shadow: var(--sunken) !important;
+  font-family: var(--font-sans);
+  padding: 3px 5px;
+  outline: none;
+}
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: var(--field-off) !important;
+  color: var(--lo) !important;
+  opacity: 1 !important;
+}
+
+/* A dropdown carries its own button at the right-hand end, and turns navy
+   when it has the focus, as that desktop's did. */
+select,
+[data-part="select-ghost"] {
+  padding: 3px 26px 3px 5px;
+  font-family: var(--font-sans);
+}
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: var(--img-select) !important;
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  background-size: 16px 17px;
+}
+select:active { background-image: var(--img-select-down) !important; }
+select:focus-visible {
+  background-color: var(--pick) !important;
+  color: var(--pick-ink);
+}
+select option { background: var(--field); color: var(--field-ink); }
+
+/* The checkbox. */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 13px !important;
+  height: 13px !important;
+  flex: none;
+  margin: 3px 0 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--field) no-repeat center / 7px 7px !important;
+  box-shadow: var(--sunken) !important;
+}
+input[type="checkbox"]:checked { background-image: var(--img-check) !important; }
+input[type="checkbox"]:active:not(:disabled) { background-color: var(--face) !important; }
+input[type="checkbox"]:disabled { background-color: var(--field-off) !important; }
+input[type="checkbox"]:focus-visible { outline: 1px dotted var(--face-ink); outline-offset: 2px; }
+/* The interface draws its own tick over the box; the box carries the pixel
+   one now. */
+input[type="checkbox"] ~ svg { display: none !important; }
+
+/* And every switch is one. That desktop had no switches — a setting was on
+   or off, and a checkbox said which — so the track becomes the box and the
+   knob goes. It is still a switch to the keyboard and to a screen reader,
+   which is what it is: it acts the moment it is pressed. */
+[data-part="toggle"] [role="switch"] {
+  width: 13px !important;
+  height: 13px !important;
+  min-width: 0;
+  margin-top: 3px !important;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--field) no-repeat center / 7px 7px !important;
+  box-shadow: var(--sunken) !important;
+}
+[data-part="toggle"] [role="switch"] > span { display: none !important; }
+[data-part="toggle"] [role="switch"][aria-checked="true"] {
+  background-image: var(--img-check) !important;
+}
+[data-part="toggle"] [role="switch"]:disabled { background-color: var(--field-off) !important; }
+[data-part="toggle"] [role="switch"]:focus-visible {
+  outline: 1px dotted var(--face-ink) !important;
+  outline-offset: 2px !important;
+}
+
+/* The option button. */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  flex: none;
+  margin: 3px 0 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--img-radio) no-repeat center / 12px 12px;
+  box-shadow: none;
+}
+input[type="radio"]:checked {
+  background: var(--img-radio-dot) no-repeat center / 4px 4px,
+              var(--img-radio) no-repeat center / 12px 12px;
+}
+input[type="radio"]:disabled { background-image: url(assets/radio-off.svg); }
+input[type="radio"]:focus-visible { outline: 1px dotted var(--face-ink); outline-offset: 2px; }
+
+:focus-visible {
+  outline: 1px dotted var(--color-ink);
+  outline-offset: 1px;
+}
+
+/* ----------------------------------------------------------------- tables
+
+   The header row gray and bold, and a rule round every cell. */
+[data-part="table"] thead th {
+  background: var(--face);
+  box-shadow: var(--raised);
+  border: 0;
+}
+[data-part="table"] thead th,
+[data-part="table"] thead th .micro-label {
+  color: var(--face-ink);
+}
+[data-part="table"] tbody td {
+  border: 1px solid var(--color-line);
+}
+/* Tighter than the interface's own, as those tables were, so a wide one
+   fits the form column more often; and a scroll bar that stays drawn when
+   it still does not, so the columns past the edge are seen to be there. */
+[data-part="table"] :is(th, td) {
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+}
+[data-part="table"] {
+  scrollbar-width: auto;
+  scrollbar-color: var(--face) var(--color-surface-2);
+}
+
+/* ---------------------------------------------------------- over the page */
+
+[data-part="modal"],
+[data-part="drawer-panel"] {
+  border-radius: 0 !important;
+  border: 2px solid var(--bar) !important;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.35) !important;
+}
+[data-part="notice"] { border-radius: 0; }
+[data-part="tabs"] button { border-radius: 0; }
+
+/* ----------------------------------------------------------------- narrow
+
+   A phone: the tabs fold behind the name, so the band is only the name. */
+@media (max-width: 767px) {
+  [data-part="shell"] > div:has(> [data-part="main"]) {
+    box-shadow: none;
+  }
+  /* The band keeps the name, which opens the menu there. The firmware line
+     has no room beside it, and its page is in that menu. */
+  [data-part="nav-masthead"] [data-part="nav-firmware"] { display: none; }
+  [data-part="nav-masthead"] { min-height: 0; }
+  [data-part="nav-brand"]::before { width: 130px; height: 26px; }
+  /* One column: the section's name across the top, then the form, then its
+     help underneath rather than beside it. */
+  [data-part="card"] { grid-template-columns: minmax(0, 1fr); }
+  [data-part="card-columns"] { grid-template-columns: minmax(0, 1fr) !important; }
+  [data-part="card-header"],
+  [data-part="card-columns"],
+  [data-part="card"] > [data-part="card-body"] { grid-column: 1; }
+  [data-part="card-header"] { padding: 0 !important; }
+  [data-part="card-help"] { padding-left: 14px !important; background: var(--help);
+                            border-top: 3px solid var(--bar); }
+  [data-part="main"] { background: var(--color-surface); padding-top: 0 !important; }
+  [data-part="nav-foot"] {
+    background: linear-gradient(to right, var(--bar) 0 30%, var(--indigo) 30% 100%);
+  }
+  [data-part="nav-foot"] [data-part="nav-about-button"] { width: auto; padding: 0 16px !important; }
+}
+
+/* A face on a profile: a picture in a sunken frame, not a button. */
+[data-part="avatar"] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: var(--sunken) !important;
+  background: var(--color-surface) !important;
+}
+/* A name that edits in place reads as the name, with its pencil. */
+[data-part="editable"] {
+  box-shadow: none !important;
+  background: none !important;
+  /* The interface lets it reach a little past its box, for the wash behind
+     it on hover; with no wash here it stays inside. */
+  margin-inline: 0 !important;
+}
+
+/* A client on the network map is an entry in a list, as a list box drew
+   them: flat, and picked out in navy under the pointer. */
+[data-part="map-client"]:is(:hover, :focus-visible) {
+  background: #000080 !important;
+  color: #ffffff;
+}
+[data-part="map-client"]:is(:hover, :focus-visible) svg { color: #ffffff; }
+
+/* Controls in the gutter under a section's name have little room, so their
+   buttons are narrower there and keep to one line. */
+[data-part="card-header"] button {
+  padding-inline: 6px !important;
+  font-size: 11px !important;
+  white-space: nowrap;
+}
+
+/* The eero Plus corner of a section, and the gray one that says the
+   hardware cannot, belong to the form: they sit in its top-right corner, not
+   the help column's, which is where the section's own corner falls here. */
+@media (min-width: 768px) {
+  [data-part="card"] > :is([data-plus-mark], [data-hardware-mark]) {
+    left: var(--gutter-w) !important;
+    right: var(--help-w) !important;
+  }
+}
+
+/* A pane that is not a section, a row of figures on Insights say, sits in
+   the form column like everything else rather than across the gutter and
+   the help. */
+@media (min-width: 768px) {
+  [data-part="page"] > [data-slot]:not([data-part="card"]):not(:has(> [data-part="card"])) {
+    margin-inline: calc(var(--gutter-w) + 28px) calc(var(--help-w) + 28px);
+  }
+  [data-part="page"] > [data-slot]:not([data-part="card"]):not(:has(> [data-part="card"])):not(:empty) {
+    padding-block: 14px;
+  }
+}
+
+/* A reading and its name, as the status pages set them: the name in plain
+   type, the reading in bold beside it rather than pushed to the far edge,
+   and no rule between one line and the next. */
+[data-part="info-row"] {
+  display: grid !important;
+  grid-template-columns: minmax(9rem, 32%) minmax(0, 1fr);
+  justify-content: start;
+  border: 0 !important;
+  padding-block: 5px !important;
+}
+[data-part="info-label"] { font-weight: 400; }
+[data-part="info-value"] { font-weight: 700; justify-self: start; }
+
+/* A checkbox's box is as wide as the switch's track in the interface, so
+   the two line up; here every switch is a checkbox already, so the box
+   shrinks to the checkbox and both start at the same edge. */
+label > span:has(> input[type="checkbox"]:first-child) {
+  width: 13px !important;
+  height: auto !important;
+  margin-top: 3px !important;
+  justify-content: flex-start !important;
+}
+label > span:has(> input[type="checkbox"]:first-child) > input { margin: 0 !important; }
+
+/* The form column is the same width whatever the window, so a list that
+   adds columns as the window widens would squeeze its cards past their own
+   edges here. As many as fit the column instead, at a width a profile's
+   face, name, and three buttons fit in. */
+[data-part="profile-list"] {
+  grid-template-columns: repeat(auto-fill, minmax(18.75rem, 1fr)) !important;
+}
+
+/* The three buttons across a profile: the bevel's usual padding leaves too
+   little room between the edges for a glyph and a word. */
+[data-part="card-button"] { padding-inline: 6px !important; }
+
+/* The heading of a folded row opens it, like a link in those tables, not a
+   bevelled button. */
+[data-part="table-fold-head"] {
+  box-shadow: none !important;
+  background: none !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  font-weight: 700 !important;
+}
+[data-part="table-fold-head"]:hover { text-decoration: underline !important; }
+
+/* Each level of the network map's outline is indented less than the
+   interface's own, so a few levels deep still fit the form column. */
+[data-slot="map"] { --outline-indent: 2.75rem; }
+
+/* A list box as wide as its longest entry, a time zone say, is no wider
+   than the room it is given. */
+[data-part="card-body"] select { max-width: 100%; min-width: 0; }

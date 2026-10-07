@@ -1,0 +1,182 @@
+syntax = "proto3";
+
+package eero.network.topology;
+
+message LLDPReport {
+  string local_port = 1;
+  eero.network.topology.LLDPInfo lldp_info = 2;
+  uint32 software_negotiated_power = 3;
+  eero.network.topology.Dot3PoeMdi dot3_poe_mdi = 4;
+}
+
+message LLDPReportReply {
+}
+
+message Dot3PoeMdi {
+  enum DeviceType {
+    DEVICE_TYPE_PD = 0;
+    DEVICE_TYPE_PSE = 1;
+  }
+
+  enum Pairs {
+    PAIRS_UNKNOWN = 0;
+    PAIRS_SIGNAL = 1;
+    PAIRS_SPARE = 2;
+  }
+
+  enum ClassAT {
+    CLASS_AT_UNKNOWN = 0;
+    CLASS_AT_0 = 1;
+    CLASS_AT_1 = 2;
+    CLASS_AT_2 = 3;
+    CLASS_AT_3 = 4;
+    CLASS_AT_4 = 5;
+  }
+
+  enum PowerType {
+    POWER_8023AT_OFF = 0;
+    POWER_8023AT_TYPE1 = 1;
+    POWER_8023AT_TYPE2 = 2;
+  }
+
+  enum Source {
+    SOURCE_UNKNOWN = 0;
+    SOURCE_PRIMARY = 1;
+    SOURCE_BACKUP = 2;
+    SOURCE_PSE = 3;
+    SOURCE_LOCAL = 4;
+    SOURCE_BOTH = 5;
+  }
+
+  enum Priority {
+    PRIORITY_UNKNOWN = 0;
+    PRIORITY_CRITICAL = 1;
+    PRIORITY_HIGH = 2;
+    PRIORITY_LOW = 3;
+  }
+
+  enum Pd4pId {
+    PD4P_NOT_SUPPORT_BOTH_MODES = 0;
+    PD4P_SUPPORT_BOTH_MODES = 1;
+  }
+
+  enum PseStatus {
+    PSE_STATUS_UNKNOWN = 0;
+    PSE_STATUS_2PAIR = 1;
+    PSE_STATUS_4PAIR_SS = 2;
+    PSE_STATUS_4PAIR_DS = 3;
+  }
+
+  enum PdStatus {
+    PD_STATUS_UNKNOWN = 0;
+    PD_STATUS_2PAIR = 1;
+    PD_STATUS_4PAIR_SS = 2;
+    PD_STATUS_4PAIR_DS = 3;
+  }
+
+  enum PsePairsExt {
+    PSE_PAIR_UNKNOWN = 0;
+    PSE_PAIR_ALT_A = 1;
+    PSE_PAIR_ALT_B = 2;
+    PSE_PAIR_ALT_BOTH = 3;
+  }
+
+  enum ClassExtDSAlt {
+    CLASS_DS_UNKNOWN = 0;
+    CLASS_DS_1 = 1;
+    CLASS_DS_2 = 2;
+    CLASS_DS_3 = 3;
+    CLASS_DS_4 = 4;
+    CLASS_DS_5 = 5;
+    CLASS_DS_SS = 7;
+  }
+
+  enum ClassExtSS {
+    CLASS_SS_UNKNOWN = 0;
+    CLASS_SS_1 = 1;
+    CLASS_SS_2 = 2;
+    CLASS_SS_3 = 3;
+    CLASS_SS_4 = 4;
+    CLASS_SS_5 = 5;
+    CLASS_SS_6 = 6;
+    CLASS_SS_7 = 7;
+    CLASS_SS_8 = 8;
+    CLASS_SS_DS = 15;
+  }
+
+  enum PowerTypeExt {
+    POWER_8023BT_OFF = 0;
+    POWER_8023BT_TYPE3 = 1;
+    POWER_8023BT_TYPE4 = 2;
+  }
+
+  enum PdLoad {
+    PD_MODE_NOT_ISOLATED = 0;
+    PD_MODE_ISOLATED = 1;
+  }
+
+  eero.network.topology.Dot3PoeMdi.DeviceType device_type = 1;
+  bool supported = 2;
+  bool enabled = 3;
+  bool paircontrol = 4;
+  eero.network.topology.Dot3PoeMdi.Pairs pairs = 5;
+  eero.network.topology.Dot3PoeMdi.ClassAT class_at = 6;
+  eero.network.topology.Dot3PoeMdi.PowerType power_type = 7;
+  eero.network.topology.Dot3PoeMdi.Source source = 8;
+  eero.network.topology.Dot3PoeMdi.Priority priority = 9;
+  uint32 requested = 10;
+  uint32 allocated = 11;
+  eero.network.topology.Dot3PoeMdi.Pd4pId pd_4pid = 12;
+  uint32 requested_a = 13;
+  uint32 requested_b = 14;
+  uint32 allocated_a = 15;
+  uint32 allocated_b = 16;
+  eero.network.topology.Dot3PoeMdi.PseStatus pse_status = 17;
+  eero.network.topology.Dot3PoeMdi.PdStatus pd_status = 18;
+  eero.network.topology.Dot3PoeMdi.PsePairsExt pse_pairs_ext = 19;
+  eero.network.topology.Dot3PoeMdi.ClassExtDSAlt class_a = 20;
+  eero.network.topology.Dot3PoeMdi.ClassExtDSAlt class_b = 21;
+  eero.network.topology.Dot3PoeMdi.ClassExtSS class_ext = 22;
+  eero.network.topology.Dot3PoeMdi.PowerTypeExt type_ext = 23;
+  eero.network.topology.Dot3PoeMdi.PdLoad pd_load = 24;
+  uint32 pse_max = 25;
+}
+
+message LLDPInfo {
+  enum ChassisIdType {
+    CHASSISID_RESERVED = 0;
+    CHASSISID_CHASSIS_COMPONENT = 1;
+    CHASSISID_INTERFACE_ALIAS = 2;
+    CHASSISID_PORT_COMPONENT = 3;
+    CHASSISID_MAC_ADDRESS = 4;
+    CHASSISID_NETWORK_ADDRESS = 5;
+    CHASSISID_INTERFACE_NAME = 6;
+    CHASSISID_LOCALLY_ASSIGNED = 7;
+  }
+
+  enum PortIdType {
+    PORTID_RESERVED = 0;
+    PORTID_INTERFACE_ALIAS = 1;
+    PORTID_PORT_COMPONENT = 2;
+    PORTID_MAC_ADDRESS = 3;
+    PORTID_NETWORK_ADDRESS = 4;
+    PORTID_INTERFACE_NAME = 5;
+    PORTID_AGENT_CIRCUIT_ID = 6;
+    PORTID_LOCALLY_ASSIGNED = 7;
+  }
+
+  string remote_system_description = 1;
+  string remote_chassis_id = 2;
+  eero.network.topology.LLDPInfo.ChassisIdType remote_chassis_id_type = 3;
+  string remote_mac_address = 4;
+  string remote_management_ipv4_addr = 5;
+  string remote_management_ipv6_addr = 6;
+  string remote_port_id = 7;
+  eero.network.topology.LLDPInfo.PortIdType remote_port_id_type = 8;
+  string remote_port_description = 9;
+  string remote_system_name = 10;
+}
+
+service Lldp {
+  rpc NotifyLldpStatus(eero.network.topology.LLDPReport) returns (eero.network.topology.LLDPReportReply);
+}

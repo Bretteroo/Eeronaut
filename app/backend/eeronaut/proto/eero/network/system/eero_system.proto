@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package eero.network.system;
+
+message RebootRequest {
+  string reason = 1;
+  bool internal = 2;
+}
+
+message RebootReply {
+}
+
+message DeleteRequest {
+}
+
+message DeleteReply {
+}
+
+message ResetRequest {
+}
+
+message ResetReply {
+}
+
+service System {
+  rpc RebootNode(eero.network.system.RebootRequest) returns (eero.network.system.RebootReply);
+  rpc DeleteNodeFromNetwork(eero.network.system.DeleteRequest) returns (eero.network.system.DeleteReply);
+  rpc SoftReset(eero.network.system.ResetRequest) returns (eero.network.system.ResetReply);
+}

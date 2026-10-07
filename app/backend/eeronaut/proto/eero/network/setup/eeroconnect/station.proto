@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package eero.network.setup.eeroconnect;
+
+import "eero/network/topology/report.proto";
+
+enum Scan6GHz {
+  NONE = 0;
+  FULL = 1;
+  PCS = 2;
+}
+
+enum ConnectResult {
+  UNKNOWN = 0;
+  INTERNAL_ERROR = 1;
+  AVAILABLE = 2;
+  CONNECTED = 3;
+  NETWORK_NOT_FOUND = 4;
+  UNSUPPORTED_AUTH_TYPE = 5;
+  INTERFACE_UNAVAILABLE = 6;
+  PRECONDITION_FAILED = 7;
+  WRONG_PASSWORD = 8;
+  CONNECTION_FAILED = 9;
+  NO_INTERNET_ACCESS = 10;
+  SSID_CONFLICT = 11;
+  GET_IP_FAILED = 12;
+  NO_INTERNET_ACCESS_WALLED = 13;
+  DNS_UNREACHABLE = 14;
+}
+
+message PlacementTestConfig {
+  repeated string bssids = 1;
+  eero.network.setup.eeroconnect.PlacementThreshold placement_threshold = 2;
+}
+
+message PlacementTestReply {
+}
+
+message PlacementThreshold {
+  uint32 mcs_threshold = 1;
+  sint32 rssi_threshold = 2;
+  sint32 noise_threshold = 4;
+}
+
+message BringDownRequest {
+}
+
+message BringDownReply {
+}
+
+message ScanRequest {
+  uint32 scan_len = 1;
+  eero.network.setup.eeroconnect.Scan6GHz scan_6ghz = 2;
+  repeated string ssids = 3;
+  repeated uint32 freqs = 4;
+}
+
+message ScanReply {
+  repeated eero.network.setup.eeroconnect.AccessPoint aps = 1;
+}
+
+message AccessPoint {
+  string ssid = 1;
+  string bssid = 2;
+  float rssi = 3;
+  string psk = 4;
+  uint32 freq = 5;
+  string mesh_id = 6;
+  uint32 channel = 7;
+  string vendor_oui = 8;
+  bytes vendor_data = 9;
+  string country_code = 10;
+  string auth_types = 11;
+  string encryptions = 12;
+}
+
+message ConnectRequest {
+  bool conn_check = 1;
+  eero.network.setup.eeroconnect.AccessPoint ap = 2;
+}
+
+message ConnectionUpdate {
+  eero.network.topology.MeshLink.SignalStrength rssi = 1;
+  string ip = 2;
+  int32 mask = 3;
+  repeated string domain_name_servers = 4;
+}
+
+message Disconnect {
+}
+
+message ConnectReply {
+  eero.network.topology.APConnection ap = 1;
+  eero.network.setup.eeroconnect.ConnectionUpdate update = 2;
+  eero.network.setup.eeroconnect.Disconnect disconnect = 3;
+  eero.network.setup.eeroconnect.ConnectResult result = 4;
+}
+
+message DisconnectRequest {
+}
+
+message DisconnectReply {
+}
+
+service Station {
+  rpc NotifyPlacementTest(eero.network.setup.eeroconnect.PlacementTestConfig) returns (eero.network.setup.eeroconnect.PlacementTestReply);
+  rpc BringDownStations(eero.network.setup.eeroconnect.BringDownRequest) returns (eero.network.setup.eeroconnect.BringDownReply);
+  rpc ScanNetworks(eero.network.setup.eeroconnect.ScanRequest) returns (stream eero.network.setup.eeroconnect.ScanReply);
+  rpc ConnectBackupNetwork(eero.network.setup.eeroconnect.ConnectRequest) returns (stream eero.network.setup.eeroconnect.ConnectReply);
+  rpc DisconnectBackupNetwork(eero.network.setup.eeroconnect.DisconnectRequest) returns (eero.network.setup.eeroconnect.DisconnectReply);
+}

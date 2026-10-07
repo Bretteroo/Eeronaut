@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package eero.network.backupaps;
+
+import "eero/network/setup/eeroconnect/station.proto";
+
+message GetBackupApRequest {
+}
+
+message SetBackupApReply {
+}
+
+message BackupAps {
+  bool enabled = 1;
+  repeated eero.network.backupaps.ApCredential credentials = 2;
+  string last_updated_at = 3;
+}
+
+message ApConnectivity {
+  string id = 1;
+  eero.network.setup.eeroconnect.ConnectResult result = 2;
+}
+
+message GetBackupApStatusRequest {
+}
+
+message GetBackupApStatusResponse {
+  repeated eero.network.backupaps.ApConnectivity connectivity = 1;
+}
+
+message ApCredential {
+  string ssid = 1;
+  string password = 2;
+  bool enabled = 3;
+  string id = 4;
+  string created = 5;
+  string last_updated_at = 6;
+}
+
+message EnableBackupApsRequest {
+  bool enabled = 1;
+  string last_updated_at = 2;
+}
+
+message EnableBackupApsReply {
+}
+
+message SSIDDiscoveryRequest {
+  eero.network.setup.eeroconnect.Scan6GHz scan_6ghz = 1;
+}
+
+message SSIDDiscoveryReply {
+  repeated eero.network.backupaps.SSID ssids = 1;
+}
+
+message SSID {
+  string ssid = 1;
+  int32 rssi = 2;
+}
+
+service BackupAp {
+  rpc GetBackupAps(eero.network.backupaps.GetBackupApRequest) returns (eero.network.backupaps.BackupAps);
+  rpc GetBackupApStatus(eero.network.backupaps.GetBackupApStatusRequest) returns (eero.network.backupaps.GetBackupApStatusResponse);
+  rpc SetBackupAps(eero.network.backupaps.BackupAps) returns (eero.network.backupaps.SetBackupApReply);
+  rpc EnableBackupAps(eero.network.backupaps.EnableBackupApsRequest) returns (eero.network.backupaps.EnableBackupApsReply);
+  rpc NetworkSSIDDiscovery(eero.network.backupaps.SSIDDiscoveryRequest) returns (stream eero.network.backupaps.SSIDDiscoveryReply);
+  rpc NodeSSIDDiscovery(eero.network.backupaps.SSIDDiscoveryRequest) returns (stream eero.network.backupaps.SSIDDiscoveryReply);
+}

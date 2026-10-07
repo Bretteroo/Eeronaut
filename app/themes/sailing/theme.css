@@ -1,0 +1,1007 @@
+/* Sailing
+ *
+ * A boat deck rather than a dashboard. The whole interface stands on one
+ * picture, fixed to the window so it never scrolls, and the cards are white
+ * decks laid on it with the picture showing between them. Each page opens on
+ * a band of it. Headings are Cormorant Garamond, the
+ * labels and controls Jost, and the one metal in the palette is brass:
+ * hairlines, focus rings, and the rule under a card's name.
+ *
+ * Ten pictures, one per page, so moving between pages changes what is over
+ * the side. They were made for this theme; see assets/CREDITS.txt.
+ *
+ * Nothing here is a maritime joke. No rope, no wheel, no porthole drawn in
+ * CSS: the photographs carry the subject and everything else stays out of
+ * their way.
+ */
+
+@font-face {
+  font-family: "Cormorant Sailing";
+  src: url(fonts/cormorant-latin.woff2) format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Jost Sailing";
+  src: url(fonts/jost-latin.woff2) format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ tokens */
+
+:root {
+  color-scheme: light;
+
+  /* Deep water, and the one metal. The accent is a sea blue dark enough to
+     carry white text at 12px, which rules out the brighter blues: this is
+     the color of anything you can press, and it has to work as a filled
+     button as often as it works as a line. */
+  --color-accent: #145a78;
+  --color-accent-ink: #0e4258;
+  --accent-fill: #145a78;
+  --accent-fill-over: #0e4258;
+  --color-accent-deep: #0a3143;
+  --color-accent-wash: rgba(20, 90, 120, 0.09);
+  --color-warn-wash: rgba(176, 141, 87, 0.14);
+
+  --brass: #b08d57;
+  --brass-lit: #d9bd8a;
+  --brass-line: rgba(176, 141, 87, 0.42);
+
+  /* Status, muted to the rest of the palette. Red is a flag, not a
+     highlight, so it is the dull red of one rather than a warning light. */
+  --color-ok: #2d7a5f;
+  --color-warn: #b7862f;
+  --color-bad: #a8383c;
+  --color-idle: #93a1a8;
+
+  /* Blue and teal: the download and upload series, a pair that is legible
+     apart and never reads as a verdict. */
+  --series-1: #145a78;
+  --series-2: #4f9bab;
+
+  --signal-good: #0d3a4f;
+  --signal-okay: #2f7f9c;
+  --signal-poor: #b9d3dd;
+
+  /* Daylight. The picture behind the interface is washed out to a bright
+     haze rather than sunk under a navy veil, because a theme whose light
+     appearance is darker than most apps' dark one is not a light appearance:
+     the first cut of this was mistaken for the dark theme by the person who
+     asked for it.
+
+     The canvas is a real color and not a stand-in for the water. Parts of
+     the interface paint themselves with it — a recessed box inside a card —
+     so a canvas the color of the sea put dark ink on near-black in three
+     places on the settings page. */
+  --color-canvas: #e9eef0;
+  --color-surface: #ffffff;
+  --color-surface-2: #f4f2ec;
+  --color-line: #e2ded4;
+  --color-line-strong: #c3bcab;
+
+  --color-ink: #12252f;
+  --color-ink-2: #3f5661;
+  /* 4.7:1 on the ivory and 5.3:1 on white. The first cut of this was #75878f,
+     which looked right and measured 3.7 — under the line for the small type
+     it is mostly used at, and the audit found it on every page. */
+  --color-ink-3: #5a6e77;
+
+  /* The column: a deep navy over the same photograph the page stands on,
+     so the picture runs behind it without a seam. It is the one dark thing
+     in the light appearance, which is what anchors a page of white cards on
+     bright water. */
+  --color-rail: rgba(8, 26, 37, 0.93);
+  --rail-solid: #0a2130;
+  --color-rail-hover: rgba(255, 255, 255, 0.08);
+  --color-rail-ink: #cfdae0;
+  --color-rail-2: rgba(255, 255, 255, 0.10);
+  --color-rail-ink-dim: #89a0ab;
+
+  /* Joinery, not upholstery: a card is a panel with a crisp edge, and every
+     control takes the same corner so nothing on the page is rounder than
+     anything else. */
+  --rail-w: 208px;
+  /* The middle of the band the page opens on: the header, then half of the
+     240px of picture above the first card. */
+  --band-mid: 190px;
+  --radius-card: 3px;
+  --radius-control: 2px;
+
+  --font-sans: "Jost Sailing", "Jost", "Futura", "Century Gothic",
+               ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Sailing", "Cormorant Garamond", Garamond,
+                  Georgia, "Times New Roman", serif;
+
+  /* What lies over the picture: a light haze through the band at the top,
+     where it is looked at, and then the plain ground from a little below
+     the band down, so the picture's lower edge is never seen and the cards
+     sit on something quiet. */
+  --sea-veil: linear-gradient(to bottom,
+                              rgba(233, 238, 240, 0.22) 0,
+                              rgba(233, 238, 240, 0.22) 300px,
+                              var(--color-canvas) 460px);
+  --deck-shadow: 0 1px 2px rgba(18, 42, 56, 0.10), 0 14px 32px rgba(18, 42, 56, 0.13);
+
+  /* The masthead is a light bar in the light appearance, with the name of
+     the page in the ink the rest of the page is set in. */
+  --header-ground: linear-gradient(to bottom, #ffffff 0%, #f7f5f0 100%);
+  /* The ground's top color alone, for the band above the header. */
+  --header-top: #ffffff;
+  --header-ink: var(--color-ink-2);
+  --header-field-bg: #ffffff;
+  --header-field-line: var(--color-line-strong);
+  --title-ink: #0c1f2a;
+  --brand-shadow: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55))
+                  drop-shadow(0 6px 14px rgba(0, 0, 0, 0.40));
+}
+
+/* Night. The deck lights come down: the cards go to the navy of a lit
+   saloon, the water darkens under a heavier veil, and brass stays brass —
+   it is the one thing on a boat that looks the same by moonlight. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    /* Light enough to be read as a link on a card: 6.0:1 on the surface.
+       What it cannot also do is carry white text, so the filled controls
+       below shadow it with a deeper teal of their own. */
+    --color-accent: #4aa8c9;
+    --color-accent-ink: #8ed2e8;
+    --accent-fill: #1a7290;
+    --accent-fill-over: #23859f;
+    --color-accent-deep: #2f8fb0;
+    --color-accent-wash: rgba(88, 176, 207, 0.16);
+    --color-warn-wash: rgba(176, 141, 87, 0.18);
+
+    --color-ok: #4fb389;
+    --color-warn: #d2a75a;
+    --color-bad: #e07076;
+
+    --series-1: #58b0cf;
+    --series-2: #7fd4c8;
+
+    --signal-good: #9fe0f2;
+    --signal-okay: #58b0cf;
+    --signal-poor: #24566b;
+
+    --color-canvas: #081722;
+    --color-surface: #0d2230;
+    --color-surface-2: #14303f;
+    --color-line: rgba(197, 213, 222, 0.14);
+    --color-line-strong: rgba(197, 213, 222, 0.30);
+
+    --color-ink: #eaf2f6;
+    --color-ink-2: #b6c8d2;
+    --color-ink-3: #8aa3b0;
+
+    --color-rail: rgba(3, 12, 19, 0.86);
+    --rail-solid: #030c13;
+    --color-rail-ink: #cfdae0;
+    --color-rail-ink-dim: #7e939e;
+
+    --sea-veil: linear-gradient(to bottom,
+                              rgba(3, 11, 17, 0.50) 0,
+                              rgba(3, 11, 17, 0.50) 300px,
+                              var(--color-canvas) 460px);
+    --deck-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 44px rgba(0, 0, 0, 0.55);
+    --header-ground: linear-gradient(to bottom, #030c13 0%, #07151f 100%);
+    --header-top: #030c13;
+    --header-ink: var(--color-rail-ink);
+    --header-field-bg: rgba(255, 255, 255, 0.07);
+    --header-field-line: rgba(255, 255, 255, 0.22);
+    --title-ink: #ffffff;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Light enough to be read as a link on a card: 6.0:1 on the surface.
+     What it cannot also do is carry white text, so the filled controls
+     below shadow it with a deeper teal of their own. */
+  --color-accent: #4aa8c9;
+  --color-accent-ink: #8ed2e8;
+  --accent-fill: #1a7290;
+  --accent-fill-over: #23859f;
+  --color-accent-deep: #2f8fb0;
+  --color-accent-wash: rgba(88, 176, 207, 0.16);
+  --color-warn-wash: rgba(176, 141, 87, 0.18);
+
+  --color-ok: #4fb389;
+  --color-warn: #d2a75a;
+  --color-bad: #e07076;
+
+  --series-1: #58b0cf;
+  --series-2: #7fd4c8;
+
+  --signal-good: #9fe0f2;
+  --signal-okay: #58b0cf;
+  --signal-poor: #24566b;
+
+  --color-canvas: #081722;
+  --color-surface: #0d2230;
+  --color-surface-2: #14303f;
+  --color-line: rgba(197, 213, 222, 0.14);
+  --color-line-strong: rgba(197, 213, 222, 0.30);
+
+  --color-ink: #eaf2f6;
+  --color-ink-2: #b6c8d2;
+  --color-ink-3: #8aa3b0;
+
+  --color-rail: rgba(3, 12, 19, 0.86);
+  --rail-solid: #030c13;
+  --color-rail-ink: #cfdae0;
+  --color-rail-ink-dim: #7e939e;
+
+  --sea-veil: linear-gradient(to bottom,
+                              rgba(3, 11, 17, 0.50) 0,
+                              rgba(3, 11, 17, 0.50) 300px,
+                              var(--color-canvas) 460px);
+  --deck-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 44px rgba(0, 0, 0, 0.55);
+  --header-ground: linear-gradient(to bottom, #030c13 0%, #07151f 100%);
+  --header-top: #030c13;
+  --header-ink: var(--color-rail-ink);
+  --header-field-bg: rgba(255, 255, 255, 0.07);
+  --header-field-line: rgba(255, 255, 255, 0.22);
+  --title-ink: #ffffff;
+}
+
+/* --------------------------------------------------------------- the water
+
+   One picture, fixed to the window, under everything. Two layers rather than
+   one so a move between areas can cross-fade: the outgoing picture is held
+   underneath while the incoming one comes up over it. The layers are on
+   `body` because nothing above it takes a transform or a filter — a fixed
+   layer inside an element that does is not fixed to the window any more. */
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-repeat: no-repeat;
+  /* The picture spans the window's width and is shifted so that its subject
+     sits in the band the page opens on. Sized to cover, a wide window showed
+     only the top third of every picture — the sky — and the helm, the marina
+     and the lighthouse were behind the cards where nobody could see them.
+     `--focus` is where the subject is, as a fraction of the picture's
+     height; `--band-mid` is how far down the window the band's middle is.
+     Below the band the veil runs to the plain ground, so the picture's lower
+     edge is never seen. */
+  background-size: 100% 100%, 100% auto;
+  background-position:
+    center,
+    center calc(var(--band-mid) - var(--focus, 0.5) * 100vw / 1.5);
+  pointer-events: none;
+}
+
+/* The incoming picture, over the outgoing one. The animation is named by a
+   custom property, because a custom property changing does not restart an
+   animation and the animation's own name changing does — so each area brings
+   its own name for the same fade. */
+body::before {
+  background-image: var(--sea-veil), var(--sea, none);
+  animation: var(--sea-fade, sea-hold) 420ms ease-out;
+}
+
+/* The outgoing one, underneath and still. It is painted for exactly as long
+   as the layer above it takes to arrive. */
+body::after {
+  z-index: -2;
+  background-image: var(--sea-veil), var(--sea-out, none);
+  background-position:
+    center,
+    center calc(var(--band-mid) - var(--sea-out-focus, 0.5) * 100vw / 1.5);
+}
+
+@keyframes sea-in-dashboard { from { opacity: 0 } }
+@keyframes sea-in-internet { from { opacity: 0 } }
+@keyframes sea-in-network { from { opacity: 0 } }
+@keyframes sea-in-clients { from { opacity: 0 } }
+@keyframes sea-in-profiles { from { opacity: 0 } }
+@keyframes sea-in-topology { from { opacity: 0 } }
+@keyframes sea-in-airtime { from { opacity: 0 } }
+@keyframes sea-in-security { from { opacity: 0 } }
+@keyframes sea-in-insights { from { opacity: 0 } }
+@keyframes sea-in-settings { from { opacity: 0 } }
+/* An area whose picture has not changed holds still rather than fading in
+   over itself. */
+@keyframes sea-hold { from { opacity: 1 } }
+
+/* The first page of a visit has nothing to hand over from, and fading in
+   from nothing is an arrival animation nobody asked for. */
+html:not([data-page-prev]) body::before { animation: none; }
+html:not([data-page-prev]) body::after { background-image: var(--sea-veil); }
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+}
+
+/* One picture for each page, each about what the page is for: the helm for
+   the front page, a clean horizon for the connection to the world, rigging
+   for the network that holds everything up, a marina of berths for the
+   clients, a passage of named cabins for the profiles, an old chart for the
+   map of the mesh, the masthead's antennas for the air, a harbor mouth and
+   its light for security, the navigator's log for the history, and the
+   switch panel for the settings. */
+body:has([data-page="dashboard"]) {
+  --sea: url(assets/page-dashboard.jpg);
+  --focus: 0.64;
+  --sea-fade: sea-in-dashboard;
+}
+body:has([data-page="internet"]) {
+  --sea: url(assets/page-internet.jpg);
+  --focus: 0.58;
+  --sea-fade: sea-in-internet;
+}
+body:has([data-page="network"]) {
+  --sea: url(assets/page-network.jpg);
+  --focus: 0.34;
+  --sea-fade: sea-in-network;
+}
+body:has([data-page="clients"]) {
+  --sea: url(assets/page-clients.jpg);
+  --focus: 0.62;
+  --sea-fade: sea-in-clients;
+}
+body:has([data-page="profiles"]) {
+  --sea: url(assets/page-profiles.jpg);
+  --focus: 0.42;
+  --sea-fade: sea-in-profiles;
+}
+body:has([data-page="topology"]) {
+  --sea: url(assets/page-topology.jpg);
+  --focus: 0.52;
+  --sea-fade: sea-in-topology;
+}
+body:has([data-page="airtime"]) {
+  --sea: url(assets/page-airtime.jpg);
+  --focus: 0.66;
+  --sea-fade: sea-in-airtime;
+}
+body:has([data-page="security"]) {
+  --sea: url(assets/page-security.jpg);
+  --focus: 0.54;
+  --sea-fade: sea-in-security;
+}
+body:has([data-page="insights"]) {
+  --sea: url(assets/page-insights.jpg);
+  --focus: 0.5;
+  --sea-fade: sea-in-insights;
+}
+body:has([data-page="settings"]) {
+  --sea: url(assets/page-settings.jpg);
+  --focus: 0.38;
+  --sea-fade: sea-in-settings;
+}
+
+/* And what was on screen a moment ago, for the layer underneath. */
+html[data-page-prev="dashboard"] body { --sea-out: url(assets/page-dashboard.jpg); --sea-out-focus: 0.64; }
+html[data-page-prev="internet"] body { --sea-out: url(assets/page-internet.jpg); --sea-out-focus: 0.58; }
+html[data-page-prev="network"] body { --sea-out: url(assets/page-network.jpg); --sea-out-focus: 0.34; }
+html[data-page-prev="clients"] body { --sea-out: url(assets/page-clients.jpg); --sea-out-focus: 0.62; }
+html[data-page-prev="profiles"] body { --sea-out: url(assets/page-profiles.jpg); --sea-out-focus: 0.42; }
+html[data-page-prev="topology"] body { --sea-out: url(assets/page-topology.jpg); --sea-out-focus: 0.52; }
+html[data-page-prev="airtime"] body { --sea-out: url(assets/page-airtime.jpg); --sea-out-focus: 0.66; }
+html[data-page-prev="security"] body { --sea-out: url(assets/page-security.jpg); --sea-out-focus: 0.54; }
+html[data-page-prev="insights"] body { --sea-out: url(assets/page-insights.jpg); --sea-out-focus: 0.5; }
+html[data-page-prev="settings"] body { --sea-out: url(assets/page-settings.jpg); --sea-out-focus: 0.38; }
+
+/* ------------------------------------------------------------------- type */
+
+body {
+  font-size: 14px;
+  letter-spacing: 0.006em;
+  background: var(--color-canvas);
+}
+
+/* The page's name, over the water, in the display face. Larger than any
+   other line in the interface and the only thing set in it up here, so the
+   header reads as a masthead rather than a toolbar with a title in it. */
+[data-part="page-title"] {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--title-ink);
+}
+
+/* A card's name, in the same face a step down. Sentence case, because these
+   are sentences — the labels below them are the ones that shout. */
+[data-part="card-title"] {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+
+/* The glyph beside it, sized to the words rather than to a grid. */
+[data-part="card-title"] > svg {
+  width: 1em;
+  height: 1em;
+  color: var(--brass);
+}
+
+/* Anything that is a sentence rather than a value. */
+[data-part="card-body"] p:not(td p):not(th p),
+[data-part="hint"] {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--color-ink-2);
+}
+
+/* Chart annotation: the small capitals a plan is labeled in. Every micro
+   label in the interface, the table headers among them. */
+.micro-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--color-ink-3);
+}
+
+[data-part="control-label"],
+[data-part="field-label"] {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-2);
+}
+
+/* A number that is the point of its card wears the display face, where the
+   figures are old-style and set like a printed table. */
+[data-part="stat"] .text-2xl,
+[data-part="card-body"] .text-2xl {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ------------------------------------------------------------ the header
+
+   Not a bar with a title in it: the strip of night the page's name is set
+   over, with the waterline under it in brass. It is opaque because the page
+   scrolls beneath it, and a card passing under a translucent header is a
+   white shape sliding behind the words. */
+[data-part="header"] {
+  position: relative;
+  background: var(--header-ground);
+  border-bottom: 0;
+  box-shadow: inset 0 -1px 0 var(--brass-line), 0 10px 24px -12px rgba(12, 31, 42, 0.28);
+  color: var(--header-ink);
+}
+
+/* Pulling the page down past its top, which a trackpad or a phone lets you
+   do, drew the page's ground in the gap above the header: a strip of gray
+   over a white header. The header carries a screen's height of its own top
+   color above it. It sits above the window and is never seen, until a pull
+   brings it down with the header and it fills the gap. */
+[data-part="header"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 100vh;
+  background: var(--header-top);
+  pointer-events: none;
+}
+
+/* On a desktop the pull goes the other way. A trackpad's overscroll keeps
+   the sticky header pinned and drags the page down under it, so the gap
+   opens beneath the title bar, where no band can reach, and the fixed sea
+   picture shows through it. Mouse and trackpad devices do not bounce here
+   at all; a phone keeps its bounce and pull-to-refresh, and the band above
+   covers what it shows. */
+@media (pointer: fine) {
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
+[data-part="header"] > div {
+  padding: 18px 26px 16px;
+  gap: 18px;
+}
+
+/* Everything beside the title: the search, the bell, the state of the
+   connection and the network's own name. They take the masthead's own ink,
+   which is dark on the light bar and pale on the night one. */
+[data-part="header"] > div > div {
+  color: var(--header-ink);
+}
+
+[data-part="header"] [data-part="search"],
+[data-part="header"] [data-part="network-switcher"] {
+  border-color: var(--header-field-line);
+  background: var(--header-field-bg);
+  color: var(--header-ink);
+}
+[data-part="header"] [data-part="search"] {
+  padding: 7px 13px;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+[data-part="header"] [data-part="search"]:hover,
+[data-part="header"] [data-part="network-switcher"]:hover {
+  border-color: var(--brass);
+}
+
+/* Narrower until the window is wide. The search is sized for the plain
+   title, and beside this rail the display-face title at 30px had no room
+   left at a 1024px window: "Dashboard" read "Dashbo...". */
+@media (min-width: 640px) and (max-width: 1279px) {
+  [data-part="header"] [data-part="search"] {
+    width: 11rem;
+  }
+}
+
+/* On a phone, the magnifier alone. The field's box took the header's
+   middle, empty but for the glyph, and left the page's name room for two
+   letters. The glyph matches the menu button's size, and the padding keeps
+   it a thumb's width to tap. */
+@media (max-width: 639px) {
+  [data-part="header"] [data-part="search"] {
+    padding: 10px;
+    border-color: transparent;
+    background: transparent;
+  }
+  [data-part="header"] [data-part="search"]:hover {
+    border-color: transparent;
+    color: var(--brass);
+  }
+  [data-part="header"] [data-part="search"] svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* The button that opens the column on a phone. */
+[data-part="header"] > div > button {
+  color: var(--header-ink);
+}
+
+/* ----------------------------------------------------------- the starboard
+   column
+
+   A translucent navy over the same water the page stands on, with brass
+   down its leading edge. The destinations are a list rather than a set of
+   chips: nothing in it is highlighted except the one you are on, which
+   takes a brass mark against the edge of the column. */
+[data-part="nav"][data-placement="rail"] {
+  padding: 22px 14px 16px;
+  box-shadow: inset 1px 0 0 var(--brass-line);
+  backdrop-filter: none;
+}
+
+[data-part="nav"][data-placement="rail"] [data-part="nav-link"] {
+  position: relative;
+  border-radius: 0;
+  padding: 9px 10px 9px 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-rail-ink);
+}
+
+[data-part="nav"][data-placement="rail"] [data-part="nav-link"] svg {
+  width: 15px;
+  height: 15px;
+  opacity: 0.72;
+}
+
+/* The one you are on: no filled pill, a brass rule down the inner edge and
+   the words at full strength. A yacht's own instruments mark the live
+   channel the same way. */
+[data-part="nav"][data-placement="rail"] [data-part="nav-link"][aria-current="page"] {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+[data-part="nav"][data-placement="rail"] [data-part="nav-link"][aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--brass);
+}
+[data-part="nav"][data-placement="rail"] [data-part="nav-link"][aria-current="page"] svg {
+  opacity: 1;
+  color: var(--brass-lit);
+}
+
+/* The mark, and the name under it in the display face. The interface's own
+   logo is an <img> in the markup that a theme cannot swap, so it is hidden
+   and the brand box draws the captain's eero instead. */
+[data-part="nav"][data-placement="rail"] [data-part="nav-brand"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 4px;
+  margin-bottom: 18px;
+}
+[data-part="nav"][data-placement="rail"] [data-part="nav-brand"] img {
+  display: none;
+}
+[data-part="nav"][data-placement="rail"] [data-part="nav-brand"]::before {
+  content: "";
+  width: 62px;
+  height: 72px;
+  background: url(assets/brand.png) center / contain no-repeat;
+  filter: var(--brand-shadow);
+}
+[data-part="nav"][data-placement="rail"] [data-part="nav-brand"] > div {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+}
+/* The rule under the name is brass, and the only one in the column. */
+[data-part="nav"][data-placement="rail"] [data-part="nav-brand"] hr {
+  width: 100%;
+  margin-top: 14px;
+  border-top-color: var(--brass-line);
+}
+
+[data-part="nav"][data-placement="rail"] [data-part="nav-about-button"] {
+  border-radius: var(--radius-control);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--brass-line);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 10px;
+}
+/* Lit in brass on hover and on keyboard focus. Navy on brass is 5.6:1. */
+[data-part="nav"][data-placement="rail"] [data-part="nav-about-button"]:hover,
+[data-part="nav"][data-placement="rail"] [data-part="nav-about-button"]:focus-visible {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: #0a1c27;
+}
+
+[data-part="nav"][data-placement="rail"] [data-part="nav-about"] {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+/* --------------------------------------------------------------- the deck
+
+   Cards are panels laid on the water with the sea showing between them, so
+   the page is given a wide margin and the gaps are opened up. The room under
+   the last card is deliberate: a page that ends flush against the bottom of
+   the window leaves nothing over the side. */
+[data-part="main"] {
+  /* The top padding is the picture: the page opens on a band of water and
+     the first card sits under it. Nothing is drawn there — the fixed layer
+     behind the whole interface simply shows through — so scrolling brings
+     the cards up over a picture that stays where it is, the way a deck moves
+     against a horizon that does not.
+
+     It is here because a photograph nobody can see is not in the theme. The
+     first cut of this put the picture only in the margins and the gaps
+     between cards, which on a full page is a lattice a few pixels wide. */
+  padding: 240px 26px 14vh;
+}
+
+[data-part="page"] {
+  gap: 20px;
+}
+
+[data-part="card"],
+[data-part="stat"] {
+  border: 0;
+  border-radius: var(--radius-card);
+  box-shadow: var(--deck-shadow);
+}
+
+/* The name of a card, with brass under it across the full width of the
+   panel. This is the theme's one repeated mark, and it is what makes a
+   stack of cards read as one set of joinery. */
+[data-part="card-header"] {
+  padding: 15px 20px 12px;
+  border-bottom: 1px solid var(--brass-line);
+}
+
+/* The padding goes on the box inside the body, not on the body itself.
+   `card-body` is the element whose height the interface measures and then
+   sets, so padding on it is subtracted from the room its contents have:
+   every card came out with its last line against the lower edge or over it.
+   The child is what was measured, and it is what gets the room. */
+[data-part="card-body"] > div {
+  padding: 18px 20px;
+}
+
+/* ------------------------------------------------------------- the fittings
+
+   Controls are square-edged and small-capped. Nothing is a pill: the shapes
+   on a boat of this kind are cut, not molded, and a row of pills would be
+   the one soft thing on the page.
+
+   The padding is in ems so a control keeps whatever size the markup asked
+   for; pinning pixels here makes every select in the app the same height as
+   the largest one. */
+button,
+[data-part="submit"],
+[data-part="link-button"],
+[data-part="row-action"],
+[data-part="tile"],
+select,
+[data-part="select-ghost"],
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+textarea {
+  border-radius: var(--radius-control);
+}
+
+/* 13px, the size of every other control: at 12px the one filled button on a
+   Settings pane sat a size smaller than the switches and selects beside it. */
+[data-part="submit"],
+[data-part="link-button"] {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  padding: 0.6em 1.25em;
+}
+
+/* A filled button takes the deeper teal rather than the accent, by naming
+   the accent something else for the length of the button. The interface
+   builds the fill out of `--color-accent` in an inline custom property, so
+   shadowing the token here reaches it — and reaches nothing else: the
+   destructive tone sets its own literal and is untouched, which a rule on
+   `background-color` would have overwritten. White on this is 5.5:1, and the
+   button still stands off a dark card at 3.2:1. */
+[data-part="submit"],
+[data-part="link-button"] {
+  --color-accent: var(--accent-fill);
+  --color-accent-ink: var(--accent-fill-over);
+}
+
+/* The measuring copy behind a self-sizing select is given the padding, the
+   face and the tracking in the same rule as the select itself. Anything set
+   on one and not the other measures a different string: with the tracking
+   here and not there, every long option came out a few pixels wider than the
+   box and was cut off — "Unrecognized" lost its last letter. */
+select,
+[data-part="select-ghost"] {
+  padding: 0.45em 2.1em 0.45em 0.8em;
+  font-family: var(--font-sans);
+  /* No tracking on a menu. The browser sizes a select to its widest option,
+     and its measurement and its rendering of that option disagreed by about
+     a pixel once letters were being spaced apart — which is all it takes for
+     "Unrecognized" to lose its last letter behind the chevron. */
+  letter-spacing: normal;
+}
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--color-line-strong);
+  background-color: var(--color-surface);
+  background-image: url(assets/chevron.svg);
+  background-repeat: no-repeat;
+  background-position: right 0.7em center;
+  background-size: 1.05em;
+  color: var(--color-ink);
+}
+select:hover:not(:disabled) {
+  border-color: var(--brass);
+}
+select:focus-visible {
+  border-color: var(--brass);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brass-line);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+textarea {
+  border: 1px solid var(--color-line-strong);
+  padding: 0.5em 0.8em;
+  font-family: var(--font-sans);
+  letter-spacing: 0.02em;
+}
+input:focus-visible,
+textarea:focus-visible {
+  border-color: var(--brass);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brass-line);
+}
+
+/* A control that cannot be used says so by going quiet and flat, not by
+   going faint. The interface dims a disabled control to half its opacity,
+   which on a white card leaves its words at 3.2:1 — legible only if you
+   already know what they say, and indistinguishable from a control that is
+   merely waiting for an answer. Here the ink steps back one level and the
+   surface goes to the ivory, which reads as "not now" at full strength. */
+select:disabled,
+input:disabled,
+textarea:disabled {
+  opacity: 1;
+  color: var(--color-ink-3);
+  background-color: var(--color-surface-2);
+  border-color: var(--color-line);
+  cursor: not-allowed;
+}
+
+/* Focus is brass everywhere, not the accent: it is the one color on the page
+   that is never anything else, so it can only mean "this is where you are". */
+:focus-visible {
+  outline-color: var(--brass);
+  outline-offset: 2px;
+  border-radius: 0;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 2px;
+  border: 1px solid var(--color-line-strong);
+  background-color: var(--color-surface);
+  transition: background-color 120ms, border-color 120ms;
+}
+input[type="checkbox"]:checked {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  background-image: url(assets/check.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 13px;
+}
+input[type="checkbox"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brass-line);
+}
+input[type="checkbox"]:disabled { opacity: 0.45; }
+
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--color-line-strong);
+  background-color: var(--color-surface);
+}
+input[type="radio"]:checked {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  box-shadow: inset 0 0 0 3px var(--color-surface);
+}
+input[type="radio"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brass-line);
+}
+
+/* The one switch shape in the app keeps its track and knob; what changes is
+   that the knob is square-ish, like everything else here. */
+[data-part="toggle"] [role="switch"] {
+  border-radius: 10px;
+}
+
+/* Tabs read as a set of labeled positions rather than buttons: small
+   capitals over a hairline, with brass under the live one. */
+[data-part="tabs"] {
+  border-bottom: 1px solid var(--color-line);
+  gap: 4px;
+}
+[data-part="tabs"] button {
+  border-radius: 0;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+}
+[data-part="tabs"] button[aria-selected="true"],
+[data-part="tabs"] button[data-active="1"] {
+  box-shadow: inset 0 -2px 0 var(--brass);
+}
+
+/* ------------------------------------------------------------------ tables
+
+   A printed table: small capitals for the headers, a hairline under each
+   row, and no fill anywhere. The rows are where this app spends its space,
+   so nothing here grows. */
+[data-part="table"] thead th {
+  border-bottom: 1px solid var(--color-line-strong);
+  padding-bottom: 8px;
+}
+[data-part="table"] tbody tr {
+  border-color: var(--color-line);
+}
+
+/* ------------------------------------------------------- over the page
+
+   A panel that floats has to be opaque and has to be clearly above the
+   water: the same joinery as a card, with a deeper shadow and the brass
+   rule under its own head. */
+[data-part="modal"],
+[data-part="drawer-panel"] {
+  border-radius: var(--radius-card);
+  border: 0;
+  box-shadow: 0 2px 4px rgba(3, 12, 18, 0.3), 0 30px 70px rgba(3, 12, 18, 0.45);
+}
+[data-part="drawer-panel"] {
+  border-radius: var(--radius-card) 0 0 var(--radius-card);
+}
+[data-part="scrim"] {
+  background: rgba(4, 14, 21, 0.55);
+}
+
+/* A notice is a line under a brass edge rather than a colored box: the color
+   is the edge, and the words keep the page's own ink. */
+[data-part="notice"] {
+  border-radius: 0;
+  border-width: 0 0 0 2px;
+  letter-spacing: 0.01em;
+}
+
+/* The corner mark for a subscription feature, and the one for hardware.
+   Both are cut corners already; here they take brass rather than a color
+   of their own. */
+[data-part="sash"] {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+
+/* The column is translucent because what is behind it is the same water the
+   page stands on. On a phone it slides over the page itself, where a
+   translucent panel is a list of destinations with a table showing through
+   it, so there it goes solid. */
+@media (max-width: 767px) {
+  [data-part="nav"][data-placement="rail"] {
+    background-color: var(--rail-solid);
+  }
+}
+
+/* ---------------------------------------------------------------- narrow
+
+   A phone has no room for a margin of sea, so the deck runs to the edges and
+   the masthead comes down to the size of a heading. The column still comes
+   in from starboard. */
+@media (max-width: 767px) {
+  [data-part="main"] {
+    padding: 140px 12px 12vh;
+  }
+  :root {
+    --band-mid: 126px;
+  }
+  [data-part="page"] {
+    gap: 14px;
+  }
+  [data-part="header"] > div {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  [data-part="page-title"] {
+    font-size: 22px;
+  }
+}
+
+/* Compact, if a theme's reader asks for it through the manifest: the panels
+   close up, the masthead drops a step, and nothing else changes. */
+[data-density="compact"] [data-part="card-body"] > div {
+  padding: 12px 14px;
+}
+[data-density="compact"] [data-part="card-header"] {
+  padding: 11px 14px 9px;
+}
+[data-density="compact"] [data-part="page"] {
+  gap: 14px;
+}

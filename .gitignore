@@ -1,0 +1,47 @@
+# Reverse-engineering rig and everything derived from a real account.
+capture/
+# The rig's downloaded toolchain — a JDK, an Android SDK, a Node runtime.
+tools/
+
+# Local editor/agent settings, not part of the project.
+.claude/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+# The built frontend, which vite writes into the backend package so one
+# container can serve both. Generated on every build; never edited by hand.
+app/backend/eeronaut/static/
+app/frontend/test-results/
+# Also at the root, from a Playwright run started from the repo root.
+/test-results/
+app/frontend/playwright-report/
+
+# Environment files: EERONAUT_UI_PASSWORD is a password.
+.env
+.env.*
+
+# Build and runtime artifacts
+*.flows
+*.jsonl
+.salt
+data/
+.localdata/
+# The test suites moved out of this repository on 2026-09-19, to the sibling
+# directory ../eero-dev. These entries are what they leave behind if somebody
+# runs them from a checkout anyway.
+app/frontend/e2e/
+app/frontend/test-results/
+app/frontend/playwright-report/
+app/backend/tests/
+app/backend/test-results/
+
+# Compiled from the .proto files beside them at install (app/backend/hatch_build.py).
+app/backend/eeronaut/proto/**/*_pb2.py
+app/backend/eeronaut/proto/**/*_pb2_grpc.py

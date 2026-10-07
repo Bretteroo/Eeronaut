@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package eero.network.status;
+
+import "eero/network/topology/report.proto";
+import "google/protobuf/timestamp.proto";
+
+enum WANType {
+  WIRED = 0;
+  LTE = 1;
+  BACKUP_AP = 2;
+}
+
+enum WANState {
+  UNKNOWN = 0;
+  NO_LINK = 1;
+  NO_IP = 2;
+  NO_GATEWAY = 3;
+  GATEWAY_UNREACHABLE = 4;
+  NO_DNS = 5;
+  DNS_UNREACHABLE = 6;
+  WALLED = 7;
+  AUTH_FAILED = 8;
+  ONLINE = 9;
+}
+
+message StatusRequest {
+}
+
+message NetworkStatus {
+  repeated eero.network.status.NodeStatus nodes = 1;
+}
+
+message NodeStatus {
+  enum WANStatus {
+    WAN_UNKNOWN = 0;
+    WAN_ONLINE = 1;
+    WAN_OFFLINE = 2;
+    WAN_REBOOTING = 3;
+  }
+
+  enum LANStatus {
+    LAN_UNKNOWN = 0;
+    LAN_ONLINE = 1;
+    LAN_OFFLINE = 2;
+    LAN_REBOOTING = 3;
+  }
+
+  string serial = 1;
+  string mac = 2;
+  string firmware = 3;
+  eero.network.topology.Metadata metadata = 4;
+  eero.network.status.NodeStatus.WANStatus wan_v4 = 5;
+  eero.network.status.NodeStatus.LANStatus lan_v4 = 6;
+  eero.network.status.NodeStatus.WANStatus wan_v6 = 7;
+  eero.network.status.NodeStatus.LANStatus lan_v6 = 8;
+  eero.network.status.WANInfo wan_ts = 9;
+}
+
+message WANDownReason {
+  enum Reason {
+    UNKNOWN = 0;
+    NO_LINK = 1;
+    NO_IP_ADDRESS = 2;
+    NO_DEFAULT_ROUTE = 3;
+    DEFAULT_ROUTE_UNREACHABLE = 4;
+    NO_DNS_SERVERS = 5;
+    DNS_UNREACHABLE = 6;
+    WALLED_GARDEN = 7;
+  }
+
+  eero.network.status.WANDownReason.Reason reason = 1;
+}
+
+message WANInfo {
+  eero.network.status.WANType wan_type = 1;
+  repeated eero.network.status.WanInterfaceStatus if_status = 2;
+  repeated eero.network.status.Route route = 3;
+}
+
+message WanInterfaceStatus {
+  eero.network.status.WANState state = 1;
+  fixed32 ipv4 = 2;
+  bytes ipv6 = 3;
+  string ifname = 4;
+  google.protobuf.Timestamp timestamp_offline = 5;
+}
+
+message Route {
+  string gateway_ip = 1;
+  string egress_interface = 2;
+  string destination = 3;
+}
+
+message NodeStatusUpdate {
+  enum Event {
+    UPDATED = 0;
+    REMOVED = 1;
+  }
+
+  eero.network.status.NodeStatusUpdate.Event event = 1;
+  eero.network.status.NodeStatus status = 2;
+}
+
+service Status {
+  rpc GetNodeStatus(eero.network.status.StatusRequest) returns (eero.network.status.NodeStatus);
+  rpc GetNetworkStatus(eero.network.status.StatusRequest) returns (eero.network.status.NetworkStatus);
+  rpc NetworkStatusStream(eero.network.status.StatusRequest) returns (stream eero.network.status.NodeStatusUpdate);
+  rpc NodeStatusStream(eero.network.status.StatusRequest) returns (stream eero.network.status.NodeStatusUpdate);
+}

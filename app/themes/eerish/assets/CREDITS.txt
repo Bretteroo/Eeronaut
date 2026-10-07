@@ -1,0 +1,30 @@
+Pictures in this theme, all supplied by the author and under no third-party
+license. Each was resized for use here; none has been altered otherwise.
+
+One photograph per navigation area, so moving between them changes the view.
+
+hero-dashboard.jpg   Dashboard
+  A desk under a window, with a monitor and a small black box beside it.
+
+hero-connection.jpg  Internet and Network
+  An entryway: console table, keys in a bowl, a phone charging, the door open.
+
+hero-devices.jpg     Clients, Profiles, and Topology
+  A credenza carrying a turntable, two speakers, and a row of records.
+
+hero-activity.jpg    Airtime, Insights, and Security
+  A living room in late light, looking out to the hills.
+
+hero-settings.jpg    Settings
+  A wall of floating shelves holding potted plants.
+
+favicon.png
+  The project's own mark, an eero in a captain's cap, supplied by the author
+  and under no third-party license.
+
+check.svg, chevron.svg
+  Drawn for this theme: the tick inside a checked box and the chevron on a
+  menu.
+
+Fonts are in fonts/, each with its license beside it. DM Sans and Poppins
+are both under the SIL Open Font License.

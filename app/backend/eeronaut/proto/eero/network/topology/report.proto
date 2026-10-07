@@ -1,0 +1,342 @@
+syntax = "proto3";
+
+package eero.network.topology;
+
+import "eero/network/topology/lldp.proto";
+
+message ReportRequest {
+}
+
+message SendReportReply {
+}
+
+message TopologyReport {
+  eero.network.topology.Metadata metadata = 1;
+  fixed32 lan_ipv4 = 2;
+  eero.network.topology.Ethernet ethernet = 3;
+  repeated eero.network.topology.MeshPath mesh_paths = 4;
+  repeated eero.network.topology.MeshLink mesh_links = 5;
+  fixed64 base_mac = 6;
+  repeated eero.network.topology.BandChannelState channels = 7;
+  eero.network.topology.PowerInfo power_info = 8;
+  eero.network.topology.BackupWAN backup_wan = 9;
+}
+
+message Metadata {
+  enum HwModel {
+    VEGA = 0;
+    UNICO = 1;
+    PICCINO = 2;
+    UNICO_NOBESRA = 3;
+    CENTO = 5;
+    EDEN = 6;
+    ANDYTOWNGATEWAY = 7;
+    ANDYTOWNLEAF = 8;
+    KILIMANJARO = 9;
+    TRIESTE = 10;
+    FIREFLY = 11;
+    HORNBILL = 12;
+    EFD = 13;
+    CRANE = 14;
+    JUPITER = 15;
+    LADRO = 17;
+    MERCI = 18;
+    SNOWBIRD = 19;
+  }
+
+  enum Role {
+    UNKNOWN = 0;
+    GATEWAY = 1;
+    LEAF = 2;
+    BRIDGED = 3;
+  }
+
+  eero.network.topology.Metadata.HwModel model = 1;
+  eero.network.topology.Metadata.Role role = 2;
+  int32 network_id = 3;
+  int32 group_id = 4;
+  int32 org_id = 5;
+  fixed64 timestamp = 6;
+}
+
+message Ethernet {
+  message Status {
+    enum DataOutputState {
+      DATA_STATE_UNKNOWN = 0;
+      DATA_ENABLED = 1;
+      DATA_DISABLED = 2;
+    }
+
+    enum PhyRate {
+      P10 = 0;
+      P100 = 1;
+      P1000 = 2;
+      P2500 = 3;
+      P5000 = 4;
+      P10000 = 5;
+    }
+
+    int32 if_num = 1;
+    bool has_carrier = 2;
+    eero.network.topology.Ethernet.Status.PhyRate speed = 3;
+    bool is_wan_port = 4;
+    bool is_lte = 5;
+    bool is_leaf_wired_to_upstream = 6;
+    eero.network.topology.LLDPInfo lldp_info = 7;
+    repeated fixed64 wired_eeros = 8;
+    eero.network.topology.PoeOutputInfo poe_output_info = 9;
+    eero.network.topology.BandwidthUsage bandwidth_usage = 10;
+    eero.network.topology.Ethernet.Status.DataOutputState data_output_state = 11;
+  }
+
+  repeated eero.network.topology.Ethernet.Status statuses = 1;
+  bool wired_internet = 2;
+  fixed64 segment_id = 3;
+}
+
+message BandwidthUsage {
+  fixed64 start_timestamp = 1;
+  fixed64 end_timestamp = 2;
+  uint64 rx_bytes = 3;
+  uint64 tx_bytes = 4;
+}
+
+message MeshPath {
+  eero.network.topology.EeroMacAddress target = 1;
+  eero.network.topology.EeroMacAddress next_hop = 2;
+  int64 metric = 3;
+  int32 hopcount = 4;
+  bool path_to_gateway = 5;
+  bool prefers_ethernet = 6;
+  uint32 channel = 7;
+}
+
+message EeroMacAddress {
+  fixed64 interface_mac = 1;
+  fixed64 base_mac = 2;
+}
+
+message MeshLink {
+  enum LinkStatus {
+    ESTAB = 0;
+    LISTEN = 1;
+    BLOCKED = 2;
+  }
+
+  message SignalStrength {
+    sint32 avg = 1;
+    sint32 chain1 = 2;
+    sint32 chain2 = 3;
+    sint32 chain3 = 4;
+    sint32 chain4 = 5;
+  }
+
+  string ifname = 1;
+  eero.network.topology.EeroMacAddress peer = 2;
+  eero.network.topology.MeshLink.LinkStatus link_status = 3;
+  string rx_bitrate = 4;
+  string tx_bitrate = 5;
+  eero.network.topology.MeshLink.SignalStrength rssi = 6;
+  int32 channel = 7;
+}
+
+message BandChannelState {
+  enum Width {
+    WIDTH_20MHz = 0;
+    WIDTH_40MHz = 1;
+    WIDTH_80MHz = 2;
+    WIDTH_160MHz = 3;
+    WIDTH_80P80MHz = 4;
+    WIDTH_320MHz = 5;
+  }
+
+  uint32 radio = 1;
+  uint32 channel = 2;
+  uint32 center_freq = 3;
+  eero.network.topology.BandChannelState.Width width = 4;
+  uint32 busyness = 5;
+}
+
+message PowerInfo {
+  enum PowerSourceType {
+    UNKNOWN = 0;
+    WALL_POWER = 1;
+    USB = 2;
+    POE = 3;
+  }
+
+  eero.network.topology.PowerInfo.PowerSourceType power_source_type = 1;
+  eero.network.topology.PoeMetadata poe_metadata = 2;
+  eero.network.topology.UsbMetadata usb_metadata = 3;
+  uint32 total_power_output_supported = 5;
+  uint32 total_poe_output_allocated = 6;
+  uint32 total_usb_power_output_allocated = 7;
+  uint32 psu_power_input = 8;
+  uint32 total_poe_output_supported = 9;
+  uint32 total_usb_power_output_supported = 10;
+}
+
+message PoeOutputInfo {
+  enum PowerState {
+    POWER_STATE_UNKNOWN = 0;
+    POWER_ENABLED = 1;
+    POWER_USER_DISABLED = 2;
+    POWER_ERROR_DISABLED = 3;
+    POWER_OVER_BUDGET = 4;
+  }
+
+  enum HardwareRequestedPowerClass {
+    CLASS_0 = 0;
+    CLASS_1 = 1;
+    CLASS_2 = 2;
+    CLASS_3 = 3;
+    CLASS_4 = 4;
+    CLASS_5 = 5;
+    CLASS_6 = 6;
+    CLASS_7 = 7;
+    CLASS_8 = 8;
+  }
+
+  message NotConnectedPowerClassMetadata {
+  }
+
+  message SingleSignaturePowerClassMetadata {
+    eero.network.topology.PoeOutputInfo.HardwareRequestedPowerClass hardware_delivered_power_class = 1;
+  }
+
+  message DualSignaturePowerClassMetadata {
+    eero.network.topology.PoeOutputInfo.HardwareRequestedPowerClass hardware_delivered_power_class_a = 1;
+    eero.network.topology.PoeOutputInfo.HardwareRequestedPowerClass hardware_delivered_power_class_b = 2;
+  }
+
+  eero.network.topology.PoeOutputInfo.PowerState power_state = 1;
+  eero.network.topology.PoeOutputInfo.NotConnectedPowerClassMetadata not_connected_power_class_metadata = 2;
+  eero.network.topology.PoeOutputInfo.SingleSignaturePowerClassMetadata single_signature_power_class_metadata = 3;
+  eero.network.topology.PoeOutputInfo.DualSignaturePowerClassMetadata dual_signature_power_class_metadata = 4;
+  uint32 software_negotiated_power = 5;
+}
+
+message PoeMetadata {
+  enum HardwareRequestedPowerClass {
+    CLASS_0 = 0;
+    CLASS_1 = 1;
+    CLASS_2 = 2;
+    CLASS_3 = 3;
+    CLASS_4 = 4;
+    CLASS_5 = 5;
+    CLASS_6 = 6;
+    CLASS_7 = 7;
+    CLASS_8 = 8;
+  }
+
+  enum PowerError {
+    NoError = 0;
+    UnderPowered = 1;
+  }
+
+  uint32 port = 1;
+  eero.network.topology.PoeMetadata.HardwareRequestedPowerClass hardware_requested_power_class = 2;
+  uint32 software_negotiated_power = 3;
+  eero.network.topology.PoeMetadata.PowerError power_error = 4;
+}
+
+message UsbMetadata {
+  uint32 port = 1;
+}
+
+message BackupWAN {
+  bool is_wan_port = 1;
+  eero.network.topology.APConnection ap_connection = 2;
+  eero.network.topology.TunnelConnection tunnel_connection = 3;
+  eero.network.topology.CellularConnection cellular_connection = 4;
+}
+
+message APConnection {
+  enum AuthType {
+    UNKNOWN = 0;
+    OPEN = 1;
+    WPA2 = 2;
+    WPA3 = 3;
+    WPA = 4;
+  }
+
+  string ifname = 1;
+  string ssid = 2;
+  string bssid = 3;
+  eero.network.topology.RateInfo rx_bitrate = 4;
+  eero.network.topology.RateInfo tx_bitrate = 5;
+  eero.network.topology.MeshLink.SignalStrength rssi = 6;
+  int32 channel = 7;
+  int32 frequency = 8;
+  eero.network.topology.APConnection.AuthType auth_type = 9;
+}
+
+message TunnelConnection {
+  eero.network.topology.EeroMacAddress peer = 1;
+}
+
+message CellularConnection {
+  enum NetworkTechnology {
+    UNKNOWN = 0;
+    TWO_G = 2;
+    THREE_G = 3;
+    LTE = 4;
+    FIVE_G = 5;
+  }
+
+  string ifname = 1;
+  bool reg_status = 2;
+  bool data_call_status = 3;
+  string modem_fw_version = 4;
+  bool sim_present = 5;
+  string iccid = 6;
+  string imsi = 7;
+  string lte_apn = 8;
+  eero.network.topology.CellularConnection.NetworkTechnology network_technology = 9;
+  int32 rssi = 10;
+  double snr = 11;
+}
+
+message RateInfo {
+  enum PHYType {
+    UNKNOWN = 0;
+    LEGACY = 1;
+    HT = 2;
+    VHT = 3;
+    HE = 4;
+    EHT = 5;
+  }
+
+  enum GuardInterval {
+    GI_UNSPECIFIED = 0;
+    GI_400NS = 1;
+    GI_800NS = 2;
+    GI_1600NS = 3;
+    GI_3200NS = 4;
+  }
+
+  int64 rate_bps = 1;
+  int32 mcs = 2;
+  int32 nss = 3;
+  eero.network.topology.RateInfo.GuardInterval gi = 4;
+  eero.network.topology.BandChannelState.Width channel_width = 5;
+  eero.network.topology.RateInfo.PHYType phy_type = 6;
+}
+
+message PathThroughput {
+  message Hop {
+    fixed64 base_mac = 1;
+    uint64 rx_throughput_bps = 2;
+    bool is_ethernet = 3;
+    uint32 control_freq = 4;
+    uint32 channel_busyness = 5;
+  }
+
+  repeated eero.network.topology.PathThroughput.Hop hops = 1;
+  fixed64 timestamp = 2;
+}
+
+service Topology {
+  rpc GetReport(eero.network.topology.ReportRequest) returns (eero.network.topology.TopologyReport);
+  rpc SendReport(eero.network.topology.ReportRequest) returns (eero.network.topology.SendReportReply);
+}

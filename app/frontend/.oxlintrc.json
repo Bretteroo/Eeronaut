@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+
+    "react/purity": "error",
+    "react/immutability": "error",
+    "react/refs": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    "react/only-export-components": "off",
+    "react/set-state-in-effect": "off",
+    "react/globals": "off"
+  }
+}

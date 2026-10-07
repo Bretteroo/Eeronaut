@@ -1,0 +1,403 @@
+/* Liquid Glass
+ *
+ * After the material Apple introduced across its platforms in 2025: panels
+ * of frosted, translucent glass floating over a soft, colored ground, with a
+ * bright edge where light catches the top of each pane, large radii, pill
+ * controls and a floating bar along the bottom for the navigation. Type is
+ * Inter, an open face with the proportions of the system font Apple uses;
+ * where the system font is present it is preferred, which is how the theme
+ * looks on the devices the material was designed for.
+ *
+ * No Apple assets, fonts, or code are used. The glass is `backdrop-filter`
+ * over a gradient; the highlight is an inset shadow one pixel tall.
+ */
+
+@font-face {
+  font-family: "Inter Glass";
+  src: url(fonts/inter-latin.woff2) format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ tokens */
+
+:root {
+  color-scheme: light;
+
+  --color-accent: #007aff;
+  /* Deep enough to read where the interface sets it small on the accent's
+     own wash, which the lighter step did not manage. */
+  --color-accent-ink: #003f8e;
+  --color-accent-deep: #00336f;
+  --color-accent-wash: rgba(0, 122, 255, 0.10);
+  --color-warn-wash: rgba(255, 159, 10, 0.12);
+
+  --color-ok: #34c759;
+  --color-warn: #ff9f0a;
+  --color-bad: #ff3b30;
+  --color-idle: #8e8e93;
+
+  /* Blue and teal, the same job split Harbor uses; teal carries no verdict
+     next to a green, amber, and red status set. */
+  --series-1: #007aff;
+  --series-2: #1aa6a6;
+
+  --signal-good: #0a4fb5;
+  --signal-okay: #3b8cff;
+  --signal-poor: #a8cbff;
+
+  /* The glass. The surfaces are alphas so the ground shows through; the
+     canvas token is the base color of that ground, and the gradient over it
+     is painted on the body below. */
+  --color-canvas: #dfe6f3;
+  --color-surface: rgba(255, 255, 255, 0.62);
+  --color-surface-2: rgba(255, 255, 255, 0.55);
+  --color-line: rgba(30, 40, 70, 0.10);
+  --color-line-strong: rgba(30, 40, 70, 0.22);
+
+  --color-ink: #10131a;
+  --color-ink-2: #3a3f4c;
+  /* 4.3:1 at #6f7583, under the line for the captions it paints. */
+  --color-ink-3: #5e6472;
+
+  --color-rail: #1c1f2a;
+  --color-rail-hover: #2a2e3c;
+  --color-rail-ink: #a9aeba;
+  --color-rail-2: #343949;
+  --color-rail-ink-dim: #868c9b;
+
+  --radius-card: 22px;
+  --brand-shadow: drop-shadow(0 1px 2px rgba(20, 30, 60, 0.30)) drop-shadow(0 4px 8px rgba(20, 30, 60, 0.18));
+  --font-sans: -apple-system, "SF Pro Text", "Inter Glass", "Helvetica Neue",
+               Helvetica, Arial, sans-serif;
+
+  /* Both of these are drawn on every card, every frame of every scroll, and
+     both cost by their radius: a 22px blur is roughly twice the work of an
+     11px one, and a 34px shadow spreads over four times the area of a 17px
+     one. Measured on the Dashboard, turning the shadows off alone took a
+     frame from 241ms to 20. These are the sizes that still read as lifted
+     glass without asking for that. */
+  --glass-blur: blur(14px) saturate(160%);
+  --glass-edge: rgba(255, 255, 255, 0.65);
+  --glass-panel: #f7f9fd;
+  --glass-shadow: 0 6px 16px rgba(20, 30, 60, 0.14);
+  --ground: radial-gradient(120% 90% at 8% 0%, #f4e9ff 0%, transparent 55%),
+            radial-gradient(90% 80% at 100% 10%, #cfe4ff 0%, transparent 55%),
+            radial-gradient(90% 90% at 50% 110%, #d9f4f0 0%, transparent 60%),
+            #dfe6f3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-accent: #0a84ff;
+    --color-accent-ink: #8cc6ff;
+    --color-accent-deep: #0060d0;
+    --color-accent-wash: rgba(10, 132, 255, 0.18);
+
+    --color-canvas: #0b1020;
+    --color-surface: rgba(28, 32, 48, 0.58);
+    --color-surface-2: rgba(40, 46, 66, 0.55);
+    --color-line: rgba(255, 255, 255, 0.10);
+    --color-line-strong: rgba(255, 255, 255, 0.22);
+
+    --color-ink: #f3f5fa;
+    --color-ink-2: #c3c8d4;
+    --color-ink-3: #868c9b;
+    --brand-shadow: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+
+    --signal-good: #0a84ff;
+    --signal-okay: #6db3ff;
+    --signal-poor: #c9e0ff;
+
+    --glass-edge: rgba(255, 255, 255, 0.16);
+    --glass-panel: #171b28;
+    --glass-shadow: 0 7px 18px rgba(0, 0, 0, 0.5);
+    --ground: radial-gradient(120% 90% at 8% 0%, #2a1e4d 0%, transparent 55%),
+              radial-gradient(90% 80% at 100% 10%, #0f2d5c 0%, transparent 55%),
+              radial-gradient(90% 90% at 50% 110%, #0d3a3a 0%, transparent 60%),
+              #0b1020;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-accent: #0a84ff;
+  --color-accent-ink: #8cc6ff;
+  --color-accent-deep: #0060d0;
+  --color-accent-wash: rgba(10, 132, 255, 0.18);
+  --color-canvas: #0b1020;
+  --color-surface: rgba(28, 32, 48, 0.58);
+  --color-surface-2: rgba(40, 46, 66, 0.55);
+  --color-line: rgba(255, 255, 255, 0.10);
+  --color-line-strong: rgba(255, 255, 255, 0.22);
+  --color-ink: #f3f5fa;
+  --color-ink-2: #c3c8d4;
+  --color-ink-3: #868c9b;
+  --brand-shadow: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+  --signal-good: #0a84ff;
+  --signal-okay: #6db3ff;
+  --signal-poor: #c9e0ff;
+  --glass-edge: rgba(255, 255, 255, 0.16);
+  --glass-panel: #171b28;
+  --glass-shadow: 0 7px 18px rgba(0, 0, 0, 0.5);
+  --ground: radial-gradient(120% 90% at 8% 0%, #2a1e4d 0%, transparent 55%),
+            radial-gradient(90% 80% at 100% 10%, #0f2d5c 0%, transparent 55%),
+            radial-gradient(90% 90% at 50% 110%, #0d3a3a 0%, transparent 60%),
+            #0b1020;
+}
+
+/* ------------------------------------------------------------------ ground */
+
+/* The ground is painted on a layer of its own rather than on the body with
+   `background-attachment: fixed`. Fixed attachment means the browser cannot
+   scroll the page by moving a layer — it repaints the gradient, full size,
+   every frame — and this gradient is three radial stops over a whole
+   window. As a fixed pseudo-element behind everything it composites once
+   and stays put, which is the effect the fixed attachment was for. */
+body {
+  background: var(--color-canvas);
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--ground);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------- glass */
+
+/* The look: a translucent surface, a lit top edge, and a soft shadow. */
+[data-part="card"],
+[data-part="stat"],
+[data-part="header"],
+[data-part="nav"][data-placement="bottom"] {
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-edge);
+  border-color: var(--glass-edge);
+}
+
+/* The blur, only where something actually passes behind the glass: the
+   header and the bar stay put while the page runs under them, and a menu
+   floats over whatever it opens onto.
+
+   Not on a card. A card scrolls with the page and has nothing behind it but
+   the ground's own gradient, so the frost has nothing to soften — and the
+   browser recomputes it over the card's whole area every frame of every
+   scroll. Measured on the Dashboard at 1400x900: eight blurred elements
+   covering 2.8 million square pixels, a median frame of 260ms against
+   Harbor's 20 and Eerish's 22. The card keeps its translucency, its edge
+   and its shadow, which is what makes it read as glass; what it loses is a
+   blur of a gradient, which looks like the gradient.
+
+   This also retires a bug that came with it: `backdrop-filter` makes an
+   element the containing block for any `position: fixed` descendant, and
+   the client drawer is a fixed panel rendered inside the clients card. With
+   the blur on the card, the drawer was sized to the card — 3,727px tall, so
+   it could not scroll — and its dimming covered the card rather than the
+   page. The exception that worked around it is gone with the cause. */
+[data-part="header"],
+[data-part="nav"][data-placement="bottom"] {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* The panel, never the overlay it sits in. `role="dialog"` is on the
+   full-viewport wrapper for three of the five dialogs and on the panel for
+   the other two, so painting by role frosted the entire page and hid
+   everything behind it. The panels are `modal` and `drawer-panel`; the
+   wrapper is `overlay` and stays transparent. */
+[data-part="overlay"] {
+  background-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* A panel that floats over the page is opaque, and the only thing here that
+   is. Glass belongs over the gradient ground, where there is nothing behind
+   it but color; over a table of a hundred clients it is noise, and the words
+   underneath show through the words on top. At 8% the ghosting was still
+   plainly legible. The panels keep the edge highlight and the shadow, so
+   they read as the same material without being see-through. */
+[data-part="modal"],
+[data-part="drawer-panel"] {
+  background-color: var(--glass-panel);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-edge);
+  border-color: var(--glass-edge);
+}
+
+[data-part="modal"] {
+  border-radius: var(--radius-card);
+}
+
+[data-part="card"],
+[data-part="stat"] {
+  border-radius: var(--radius-card);
+}
+
+[data-part="card-header"] {
+  border-bottom-color: var(--color-line);
+}
+
+/* The header is a sheet of glass over the page, so it has no hard edge. */
+[data-part="header"] {
+  border-bottom-color: transparent;
+}
+
+/* ---------------------------------------------------------------- controls */
+
+[data-part="submit"],
+[data-part="row-action"],
+[data-part="nav-link"],
+[data-part="theme-picker"] button,
+[data-part="toggle"] button {
+  border-radius: 999px;
+}
+
+[data-part="submit"] {
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+input, select, textarea {
+  border-radius: 12px;
+  background-color: var(--color-surface-2);
+}
+
+/* The bottom bar is the material at its most literal: a floating pill of
+   glass with the destinations in it, lifted well off the page. */
+[data-part="nav"][data-placement="bottom"] {
+  padding: 6px;
+  gap: 4px;
+  border-width: 1px;
+}
+
+/* On a phone the bar is one button in the corner nearest the thumb rather
+   than a strip of ten across the foot of the screen. The manifest asks for
+   the destinations to fold into a menu at that width; this puts what is
+   left where a thumb is, which means letting go of the centring the wide
+   bar uses. */
+@media (max-width: 767px) {
+  [data-part="nav"][data-placement="bottom"]:has([data-part="nav-menu-button"][data-whole]) {
+    left: auto;
+    right: 12px;
+    /* Both, because the bar is centered with the `translate` property rather
+       than with a transform, and resetting one leaves the other: the button
+       sat half its own width to the left of where it was put. */
+    translate: none;
+    transform: none;
+    max-width: none;
+  }
+}
+
+[data-part="nav-menu-list"] {
+  background: var(--glass-panel);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-edge);
+  border-color: var(--glass-edge);
+}
+
+/* The mark, which with the navigation at the foot of the page is the only
+   thing in the top corner. The name beside it is the interface's own and is
+   already the first word of the page it opens; on a phone there is no room
+   for either, and the bar below says where you are. */
+[data-part="nav-brand"] span {
+  display: none;
+}
+@media (max-width: 767px) {
+  [data-part="header"] :has(> [data-part="nav-brand"]) {
+    display: none;
+  }
+}
+[data-part="nav"][data-placement="bottom"] [data-part="nav-link"] {
+  padding: 6px 12px;
+}
+[data-part="nav"][data-placement="bottom"] [data-part="nav-link"][aria-current="page"] {
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Tables and tabs pick up the softer line. */
+[data-part="table"] tr {
+  border-color: var(--color-line);
+}
+[data-part="tabs"] {
+  border-color: var(--color-line);
+}
+
+/* Reduced motion asks for a still interface, not a plain one: the blur is
+   not motion, so it stays; only the drop shadows go, which cost the most on
+   a machine that has asked to do less. */
+@media (prefers-reduced-motion: reduce) {
+  [data-part="card"], [data-part="stat"] { box-shadow: inset 0 1px 0 var(--glass-edge); }
+}
+
+/* ------------------------------------------------------------------- mark
+
+   The captain's eero in place of the interface's own logo. The core mark is
+   an <img> in the shell's markup, which a theme cannot swap out — so it is
+   hidden and the brand button grows a box of its own instead. Sized by
+   height with the width following the picture's 1.19 aspect, because the hat
+   sticks out to the left and a square box would squash it. */
+[data-part="nav-brand"] img {
+  display: none;
+}
+[data-part="nav-brand"]::before {
+  content: "";
+  flex: none;
+  width: 35px;
+  height: 40px;
+  background: url(assets/brand.png) left center / contain no-repeat;
+  /* `drop-shadow`, not `box-shadow`: the mark is a background image on this
+     box, so a box shadow would trace a rectangle around it. This follows the
+     picture's own alpha, which is what lifts a mostly-white device off a
+     white bar. */
+  filter: var(--brand-shadow);
+}
+
+/* ------------------------------------------------------- filled controls
+
+   A button filled with the accent carries white words, and the accent this
+   theme is built on is a shade too light to hold them: white on it measures
+   just under the 4.5:1 an audit asks for at the size these buttons are set
+   in. The palette keeps its own blue — it is the color of everything else
+   here — and the fill alone goes a step deeper, by naming the accent
+   something else for the length of the button. The interface builds the fill
+   out of `--color-accent` in a custom property of its own, so shadowing the
+   token reaches it; a rule on `background-color` would also have painted the
+   destructive tone, which is meant to have no fill at all. */
+[data-part="submit"],
+[data-part="link-button"] {
+  --color-accent: #0071ee;
+  --color-accent-ink: #005ac4;
+}
+
+/* The destination you are on is a filled pill in the rail, with white words
+   on it — the same shortfall as the button above, so the same deeper blue. */
+[data-part="nav-link"][aria-current="page"] {
+  --color-accent: #0071ee;
+}
+
+/* The mark that says a subscription is in force says it in the status green,
+   which is a fill color: as words on a white card it is under 2.5:1. Deeper
+   where the card is light, the ramp's own where it is dark, and only here —
+   the dots and the chart series are untouched. */
+[data-part="plus-status"] {
+  --color-ok: #1a7a3d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-part="plus-status"] {
+    --color-ok: #34c759;
+  }
+}
+:root[data-theme="dark"] [data-part="plus-status"] {
+  --color-ok: #34c759;
+}
+
+/* A link is words, so it takes the accent's text color rather than its fill:
+   the fill blue is under 4.5:1 as text on the page, on a card, and on the
+   tinted banner that announces a firmware update. Hovering thickens the
+   underline, since the color it used to deepen to is now the resting one. */
+.link { color: var(--color-accent-ink); }
+.link:hover { color: var(--color-accent-ink); text-decoration-thickness: 2px; }

@@ -1,0 +1,29 @@
+Everything in this theme is drawn for it or drawn in CSS, except the
+Windows 95 controls, below.
+
+wordmark.png
+  The program's name with "Open source browser control" under it, supplied
+  by the author and under no third-party license. Its indigo background was
+  keyed out to transparent so the one file sits on the band in both
+  appearances.
+
+favicon.png
+  A small router with two antennas and a row of lights, drawn for this theme
+  on a sixteen-pixel grid and scaled up without smoothing.
+
+The theme is an impression of the setup pages home routers shipped with in
+the early 2000s, made from memory of the arrangement and a reading of the
+colors: no logo, wordmark, image, or text from any of that firmware is used,
+and this project is unaffiliated with any router maker. The indigo, the pale
+gray, and the black are read off an archived copy of one of those pages.
+
+check.svg, check-off.svg, select.svg, select-down.svg, radio.svg,
+radio-off.svg, radio-dot.svg
+  The tick, the dropdown button, and the option button from 95.css by Jordan
+  Scales and Luka Novak (https://git.envs.net/ljn/95.css), under the MIT
+  license in LICENSE-95css.txt, taken out of its stylesheet as files. The
+  bevels in theme.css follow the same stylesheet.
+
+check-dark.svg, select-dark.svg, select-down-dark.svg, radio-dark.svg,
+radio-dot-dark.svg
+  The same glyphs recolored for the dark appearance.

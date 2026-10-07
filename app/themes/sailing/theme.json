@@ -1,0 +1,25 @@
+{
+  "engine": "1.0",
+  "id": "sailing",
+  "version": "1.0.0",
+  "title": "Sailing",
+  "description": "White decks and brass over photographs of deep water, set in Cormorant Garamond and Jost.",
+  "screenshots": {
+    "light": "screenshot-light.png",
+    "dark": "screenshot-dark.png"
+  },
+  "favicon": "assets/favicon.png",
+  "layout": {
+    "navigation": "rail",
+    "density": "comfortable",
+    "pages": {
+      "dashboard": {
+        "order": [
+          "glance",
+          "connection",
+          "mesh"
+        ]
+      }
+    }
+  }
+}

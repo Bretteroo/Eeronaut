@@ -1,0 +1,50 @@
+{
+  "engine": "1.0",
+  "id": "eerish",
+  "version": "1.0.0",
+  "title": "Eerish",
+  "description": "White space, large type, photography, and eero's blue, with the navigation across the top.",
+  "screenshots": {
+    "light": "screenshot-light.png",
+    "dark": "screenshot-dark.png"
+  },
+  "favicon": "assets/favicon.png",
+  "layout": {
+    "navigation": "top",
+    "density": "comfortable",
+    "pages": {
+      "dashboard": {
+        "order": [
+          "glance",
+          "connection"
+        ]
+      }
+    },
+    "nav_groups": [
+      {
+        "group": "connection",
+        "items": [
+          "/internet",
+          "/network"
+        ]
+      },
+      {
+        "group": "devices",
+        "items": [
+          "/clients",
+          "/profiles",
+          "/topology"
+        ]
+      },
+      {
+        "group": "activity",
+        "items": [
+          "/airtime",
+          "/insights",
+          "/security"
+        ]
+      }
+    ],
+    "collapse": "menu"
+  }
+}

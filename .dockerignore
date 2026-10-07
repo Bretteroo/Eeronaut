@@ -1,0 +1,17 @@
+# The image carries the program and nothing else. Most of what used to be
+# listed here — tests, specs, tooling, notes — is no longer in the repository
+# at all; what remains is what a checkout has that the runtime does not need.
+capture/
+# Local tooling kept beside a checkout. Not part of the program, and large.
+tools/
+**/node_modules
+**/.venv
+**/__pycache__
+**/*.pyc
+app/backend/eeronaut/static
+# A running instance's own state: its session, its preferences, and the
+# client certificate it enrolled against somebody's eeros.
+**/.localdata/
+data/
+.git
+*.md

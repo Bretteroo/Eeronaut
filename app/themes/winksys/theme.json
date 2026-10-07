@@ -1,0 +1,210 @@
+{
+  "engine": "1.0",
+  "id": "winksys",
+  "version": "1.0.0",
+  "title": "Winksys",
+  "description": "An homage to the one that started it all. Nostalgic and hideous in equal measure. Indigo bars, two rows of tabs, and a help column that's always empty when you need it. Included for laughs. Not recommended.",
+  "screenshots": {
+    "light": "screenshot-light.png",
+    "dark": "screenshot-dark.png"
+  },
+  "favicon": "assets/favicon.png",
+  "layout": {
+    "navigation": "tabs",
+    "density": "compact",
+    "hints": "aside",
+    "overflow": "fold",
+    "nav_groups": [
+      {
+        "group": "setup",
+        "items": [
+          "/v/basic_setup",
+          "/v/ddns"
+        ]
+      },
+      {
+        "group": "wireless",
+        "items": [
+          "/v/wireless_basic",
+          "/v/wireless_advanced"
+        ]
+      },
+      {
+        "group": "protection",
+        "items": [
+          "/v/firewall"
+        ]
+      },
+      {
+        "group": "access",
+        "items": [
+          "/v/internet_access"
+        ]
+      },
+      {
+        "group": "applications",
+        "items": [
+          "/v/port_forwarding"
+        ]
+      },
+      {
+        "group": "administration",
+        "items": [
+          "/v/management",
+          "/v/log",
+          "/v/diagnostics",
+          "/v/firmware_upgrade"
+        ]
+      },
+      {
+        "group": "status",
+        "items": [
+          "/v/router",
+          "/v/local_network",
+          "/v/wireless_status",
+          "/v/notifications",
+          "/insights"
+        ]
+      }
+    ],
+    "views": [
+      {
+        "view": "basic_setup",
+        "panes": [
+          "internet/internet",
+          "internet/dns",
+          "network/lan",
+          "network/reservations",
+          "settings/time",
+          "internet/backup"
+        ]
+      },
+      {
+        "view": "ddns",
+        "panes": [
+          "section/ddns"
+        ]
+      },
+      {
+        "view": "wireless_basic",
+        "panes": [
+          "network/wifi",
+          "network/guest"
+        ]
+      },
+      {
+        "view": "wireless_advanced",
+        "panes": [
+          "airtime/channels",
+          "network/power",
+          "network/thread"
+        ]
+      },
+      {
+        "view": "firewall",
+        "panes": [
+          "security/protection",
+          "security/domains"
+        ]
+      },
+      {
+        "view": "internet_access",
+        "panes": [
+          "profiles/profiles"
+        ]
+      },
+      {
+        "view": "port_forwarding",
+        "panes": [
+          "security/inbound"
+        ]
+      },
+      {
+        "view": "management",
+        "panes": [
+          "settings/access",
+          "section/network_switcher",
+          "settings/network",
+          "settings/display",
+          "settings/language",
+          "settings/filters"
+        ]
+      },
+      {
+        "view": "log",
+        "panes": [
+          "security/activity"
+        ]
+      },
+      {
+        "view": "diagnostics",
+        "panes": [
+          "internet/wan"
+        ]
+      },
+      {
+        "view": "firmware_upgrade",
+        "panes": [
+          "settings/firmware"
+        ]
+      },
+      {
+        "view": "router",
+        "panes": [
+          "dashboard/firmware",
+          "dashboard/connection",
+          "dashboard/glance",
+          "dashboard/mesh",
+          "dashboard/usage"
+        ]
+      },
+      {
+        "view": "local_network",
+        "panes": [
+          "clients/clients",
+          "topology/map"
+        ]
+      },
+      {
+        "view": "wireless_status",
+        "panes": [
+          "airtime/clients-by-band",
+          "airtime/airtime"
+        ]
+      },
+      {
+        "view": "notifications",
+        "panes": [
+          "section/notifications",
+          "settings/notifications"
+        ]
+      }
+    ]
+  },
+  "strings": {
+    "product_line": "Wireless Broadband Router",
+    "product_model": "EERO",
+    "nav_group.setup": "Setup",
+    "nav_group.wireless": "Wireless",
+    "nav_group.protection": "Security",
+    "nav_group.access": "Access Restrictions",
+    "nav_group.applications": "Applications & Gaming",
+    "nav_group.administration": "Administration",
+    "nav_group.status": "Status",
+    "view.basic_setup": "Basic Setup",
+    "view.ddns": "DDNS",
+    "view.wireless_basic": "Basic Wireless Settings",
+    "view.wireless_advanced": "Advanced Wireless Settings",
+    "view.firewall": "Firewall",
+    "view.internet_access": "Internet Access",
+    "view.port_forwarding": "Port Range Forward",
+    "view.management": "Management",
+    "view.log": "Log",
+    "view.diagnostics": "Diagnostics",
+    "view.firmware_upgrade": "Firmware Upgrade",
+    "view.router": "Router",
+    "view.local_network": "Local Network",
+    "view.wireless_status": "Wireless",
+    "view.notifications": "Notifications"
+  }
+}

@@ -1,0 +1,384 @@
+@import "tailwindcss";
+
+/* The tokens every part of the interface reads, with the values a theme
+   supplies. This file holds none of a theme's choices: the colors, the type
+   and the radii come from `theme.css` in whichever theme is active, loaded
+   after this sheet so its `:root` rules win. What is here is the fallback
+   for the moment before a theme has loaded, or for a theme that names a
+   token and forgets another — plain gray, legible, and visibly not a design,
+   so a missing token is noticed rather than mistaken for a choice.
+
+   The token names are the contract. A theme that sets all of these has
+   restyled the whole interface; see THEMES.md for what each one paints. */
+
+@theme {
+  /* Where a page of cards becomes two columns. Below Tailwind's `xl`, which
+     is 1280px: a phone browser asked for the desktop site lays the page out
+     at about 980 CSS pixels whatever the screen is, so at `xl` every page
+     came out in one column there — and a 1024 or 1100px window was no
+     better off. 960 is wide enough for two cards of 460 and narrow enough
+     to catch both. */
+  --breakpoint-wide: 60rem;
+
+  --radius-card: 8px;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+               Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  --rail-w: 172px;
+
+  --color-accent: #4b5563;
+  --color-accent-ink: #374151;
+  --color-accent-deep: #1f2937;
+  --color-accent-wash: rgba(75, 85, 99, 0.06);
+  --color-warn-wash: rgba(75, 85, 99, 0.08);
+
+  --color-ok: #6b7280;
+  --color-warn: #6b7280;
+  --color-bad: #6b7280;
+  --color-idle: #9ca3af;
+
+  --series-1: #4b5563;
+  --series-2: #9ca3af;
+  --signal-good: #374151;
+  --signal-okay: #6b7280;
+  --signal-poor: #d1d5db;
+
+  --color-canvas: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-surface-2: #f9fafb;
+  --color-line: #e5e7eb;
+  --color-line-strong: #d1d5db;
+
+  --color-ink: #111827;
+  --color-ink-2: #374151;
+  --color-ink-3: #6b7280;
+
+  --color-rail: #1f2937;
+  --color-rail-hover: #374151;
+  --color-rail-ink: #9ca3af;
+  --color-rail-2: #374151;
+  --color-rail-ink-dim: #6b7280;
+}
+
+html, body, #root { height: 100%; }
+
+/* A pane whose contents chose not to render leaves no hole behind. A `Slot`
+   wraps a component that draws its own card and sometimes draws nothing —
+   the firmware notice with no update pending, a card hidden by preference
+   — and an empty grid item would still take a row's gap. */
+[data-slot]:empty { display: none; }
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  /* Firefox is the reference browser: the standard scrollbar properties, not
+     the -webkit- pseudo-elements Firefox does not implement. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+/* Firefox draws a dotted inner ring on focused buttons; drop it so the single
+   visible focus ring below reads the same across engines. */
+button::-moz-focus-inner { border: 0; padding: 0; }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.micro-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  /* A grid item defaults to min-width:auto, which is its content's width. That
+     stops a card ever being narrower than the widest thing inside it, so an
+     `overflow-x: auto` child never gets the chance to scroll — the card grows
+     instead and takes the page with it. The network map made the topology page
+     978px wide on a 390px phone this way. */
+  min-width: 0;
+}
+
+.row-hover:hover { background: var(--color-accent-wash); }
+
+/* Anything present but not usable — locked behind a subscription, unsupported
+   by the hardware, or inert while a write is in flight — is dimmed by exactly
+   this much. One class rather than a number written at each site, because the
+   numbers had drifted: 0.45 in some places, 0.50 in others, and 0.23 where a
+   wrapper's opacity multiplied with a disabled control's own. Opacity does not
+   compose, so nothing carrying this may contain anything else that does. */
+.dimmed {
+  opacity: 0.45;
+  filter: grayscale(35%);
+}
+
+/* Wide content scrolls inside its own container so the page body never scrolls
+   sideways on a narrow viewport. */
+.table-scroll { overflow-x: auto; }
+
+/* An indeterminate progress bar: a stripe that travels the track.
+
+   Used where the work has a real duration but reports nothing while it runs —
+   an eero speed test says nothing at all until the result is filed. A
+   determinate bar there would be a made-up percentage, so the bar says
+   "working" and the elapsed seconds beside it carry the only honest number. */
+/* Three dots taking turns after a word like "Publishing", for work that
+   reports nothing until it is done. */
+@keyframes working-dot {
+  0%, 80%, 100% { opacity: 0.2; }
+  40%           { opacity: 1; }
+}
+.working-dots > span { animation: working-dot 1.2s ease-in-out infinite both; }
+.working-dots > span:nth-child(2) { animation-delay: 0.2s; }
+.working-dots > span:nth-child(3) { animation-delay: 0.4s; }
+@media (prefers-reduced-motion: reduce) {
+  .working-dots > span { animation: none; opacity: 1; }
+}
+
+@keyframes bar-indeterminate {
+  0%   { transform: translateX(-110%); }
+  100% { transform: translateX(320%); }
+}
+.bar-indeterminate {
+  animation: bar-indeterminate 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar-indeterminate { animation: none; width: 100%; opacity: 0.55; }
+}
+
+/* ------------------------------------------------------------- hover borders
+
+   Anything clickable that draws a border brightens it under the pointer. The
+   hover color comes from the control's own text color, so each keeps its
+   identity rather than all of them turning the same blue: a delete button
+   hovers red, a neutral one settles on its ink gray.
+
+   Disabled controls are excluded. A border that answers the pointer on a
+   control that will not answer a click is a lie about what is clickable. */
+button:not(:disabled),
+.toned {
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+/* :where() keeps this at one class of specificity, so a component that names
+   its own hover border still wins. Without it this rule out-specified every
+   `hover:border-*` utility in the app and repainted them — the mesh node
+   chips lost their accent hover to plain ink. */
+button:where(:not(:disabled)):hover {
+  border-color: currentColor;
+}
+
+/* Controls whose resting border comes from a tone rather than a class. The
+   custom property carries the color so the hover rules can win — an inline
+   `border-color` beats every selector, which is why these are not set that
+   way. */
+.toned {
+  border-color: var(--btn-line);
+}
+
+/* Where currentColor is the wrong answer, the control deepens its own color
+   instead. The mix runs toward the ink of whichever theme is active, so the
+   result darkens in light mode and lightens in dark without a second palette.
+
+   This is not an edge case. A toned row button takes its text color from its
+   tone, so border and text are the same value and currentColor is a no-op —
+   Pause stayed exactly the same amber under the pointer. A switch's border
+   matches its fill, so currentColor would ring a blue pill in near-black. A
+   bordered label standing in for a button inherits body ink, likewise. */
+button.toned:where(:not(:disabled)):hover,
+label.toned.toned-hover:hover {
+  border-color: color-mix(in oklab, var(--btn-line) 62%, var(--color-ink));
+}
+
+/* ------------------------------------------------------------------ skeletons
+
+   A placeholder shaped like the content it stands in for, so the page does not
+   jump when the real thing arrives. The pulse is deliberately the only motion:
+   a shimmer sweeping across a dozen of these at once draws more attention than
+   the wait it is covering. */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+.skeleton {
+  background: var(--color-line);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+/* What a pane's contents do when they replace its placeholder. Applied by
+   `AutoHeight`, which is the thing that knows the placeholder has gone. */
+@keyframes content-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; opacity: 0.7; }
+}
+
+/* A sortable column header. The hover color lives here rather than as a
+   utility class because `.micro-label` below sets `color` from outside any
+   cascade layer, and an unlayered declaration beats every layered one whatever
+   its specificity — so a `hover:text-*` utility on one of these silently did
+   nothing. Measured across all eleven pages: forty-one sort headers with no
+   response to the pointer at all. */
+.micro-label.sortable[data-active='1'] {
+  color: var(--color-ink);
+}
+.micro-label.sortable:hover,
+.micro-label.sortable:focus-visible {
+  color: var(--color-ink-2);
+}
+/* The sorted column is already the darkest text in the row, so dimming it
+   toward ink-2 on hover would read as going backwards. It moves to the accent
+   its arrow already wears, which says "this is the one, click to change it". */
+.micro-label.sortable[data-active='1']:hover,
+.micro-label.sortable[data-active='1']:focus-visible {
+  color: var(--color-accent);
+}
+
+/* The checkbox takes its resting border from the same custom property the
+   toned buttons use, so hovering it deepens the border exactly as they do. */
+input[type='checkbox'].peer {
+  border-color: var(--btn-line);
+}
+input[type='checkbox'].peer:not(:disabled):hover {
+  border-color: color-mix(in oklab, var(--btn-line) 62%, var(--color-ink));
+}
+
+/* The pane a search result pointed at. A ring rather than a background flash:
+   panes carry their own surface color and several are dimmed, so a
+   background change reads differently depending on which one you land on. */
+@keyframes pane-found {
+  0%, 70% { box-shadow: 0 0 0 2px var(--color-accent); }
+  100%    { box-shadow: 0 0 0 2px transparent; }
+}
+.pane-found {
+  animation: pane-found 2.2s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pane-found { animation: none; box-shadow: 0 0 0 2px var(--color-accent); }
+}
+
+/* A scroll container with no visible scrollbar. For the tab strip, which
+   scrolls on a narrow screen and would otherwise carry a permanent gutter
+   under its tabs on platforms that reserve one. Reachable by touch, wheel and
+   keyboard regardless — this hides the bar, not the scrolling. */
+.no-bar { scrollbar-width: none; }
+.no-bar::-webkit-scrollbar { display: none; }
+
+/* Edge fades for a scrollable strip, applied only on the side with more to
+   see. `mask` rather than an overlay gradient: an overlay would need the
+   container's background color, and these sit on two different surfaces. */
+.fade-r { mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+.fade-l { mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent); }
+.fade-x { mask-image: linear-gradient(to right, transparent, #000 28px,
+                                      #000 calc(100% - 28px), transparent); }
+
+/* A link to somewhere else in the app. Solid underline and the accent color:
+   a dotted underline already means "hover for an explanation" throughout the
+   interface, so links must not borrow it. */
+.link {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.link:hover { color: var(--color-accent-ink); }
+
+/* The pause/resume control on a profile card. A gentle spring on hover and
+   press, and the glyph turns in whenever it changes from bars to a triangle
+   or back — the one control on the page that is a toy, and allowed to feel
+   like one. One easing curve throughout and no hard stops: an earlier version
+   snapped between states because the hover transform dropped the moment the
+   control was disabled mid-write. Held still for anyone who has asked for
+   less motion. */
+.pp-toggle {
+  transition: transform 260ms cubic-bezier(0.2, 1.1, 0.4, 1),
+              border-color 150ms, color 150ms;
+  will-change: transform;
+}
+.pp-toggle:hover { transform: scale(1.1); }
+.pp-toggle:active { transform: scale(0.9); transition-duration: 120ms; }
+.pp-toggle:disabled { transform: none; }
+.pp-pop { animation: pp-pop 380ms cubic-bezier(0.2, 1.1, 0.4, 1) both; }
+@keyframes pp-pop {
+  from { transform: scale(0.5) rotate(-90deg); opacity: 0; }
+  40%  { opacity: 1; }
+  to   { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-toggle, .pp-toggle:hover, .pp-toggle:active { transform: none; transition: none; }
+  .pp-pop { animation: none; }
+}
+
+/* The mesh diagram's lines. A faint blue line with two trains of brighter
+   dots drifting along it in opposite directions: traffic, going both ways,
+   slowly enough to be felt rather than watched. A line to a node nothing can
+   reach is gray and still. Everything holds still for anyone who has asked
+   for less motion, and the line stays a line. */
+/* No `position` here: several stems are positioned absolutely by their
+   utility classes, and a `relative` in this rule overrode that — the vertical
+   stems lost their height and the rail segments stopped stopping at the
+   outermost children's centers. A stem that needs positioning for its dots
+   says so in its own class list. */
+.mesh-stem {
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+.mesh-stem::before, .mesh-stem::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.85;
+  animation: mesh-flow 2.4s linear infinite;
+}
+.mesh-stem::after { opacity: 0.55; animation-direction: reverse; }
+.mesh-stem-v::before, .mesh-stem-v::after {
+  background: repeating-linear-gradient(to bottom, var(--color-accent) 0 3px, transparent 3px 14px);
+  background-size: 100% 14px;
+}
+.mesh-stem-h::before, .mesh-stem-h::after {
+  background: repeating-linear-gradient(to right, var(--color-accent) 0 3px, transparent 3px 14px);
+  background-size: 14px 100%;
+  --mesh-axis: x;
+}
+@keyframes mesh-flow {
+  from { background-position: 0 0; }
+  to   { background-position: 14px 14px; }
+}
+.mesh-stem-down { background: var(--color-line-strong); }
+@media (prefers-reduced-motion: reduce) {
+  .mesh-stem::before, .mesh-stem::after { animation: none; }
+  .mesh-stem { background: color-mix(in srgb, var(--color-accent) 70%, transparent); }
+}
+
+/* The notification dot's pulse.
+ *
+ * A ring that grows out of the dot and fades, on a long enough cycle to read
+ * as a heartbeat rather than a blink. Transform and opacity only, so it never
+ * touches layout and the compositor does the work — the dot beneath it does
+ * not move, which matters because it is also a button.
+ */
+@keyframes notif-pulse {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  70%  { transform: scale(2.4); opacity: 0; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.notif-pulse { animation: notif-pulse 2.2s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .notif-pulse { animation: none; opacity: 0; }
+}

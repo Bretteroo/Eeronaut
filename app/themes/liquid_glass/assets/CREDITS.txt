@@ -1,0 +1,14 @@
+brand.png
+  The project's own mark — an eero in a captain's cap — supplied by the
+  author. Not a third-party asset and under no third-party license.
+
+Every other surface in this theme is drawn in CSS: the glass is a
+backdrop-filter over a gradient and the highlight is an inset shadow, so
+there are no other images to credit.
+
+favicon.png
+  The same mark, at tab-icon size. Supplied by the author, not a third-party
+  asset and under no third-party license.
+
+Fonts are in fonts/, with the license beside it. Inter is under the SIL Open
+Font License.

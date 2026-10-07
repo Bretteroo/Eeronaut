@@ -1,0 +1,778 @@
+/* Eerish
+ *
+ * In the manner of eero's own site: white space, large type, photography of
+ * homes, one clear blue, thin gray rules, and buttons that are pills. The
+ * navigation runs across the top the way a marketing site's does, and each
+ * page opens on a photograph that the first row of cards sits over. Type is
+ * DM Sans, an open geometric face close in feel to the proprietary one the
+ * site sets.
+ *
+ * Style only. No eero logo, wordmark, photography, or copy is used, and this
+ * project remains unaffiliated with eero or Amazon. The colors are read off
+ * the site's public stylesheets: #2468ff for the blue, #0e0f0f for the ink,
+ * #161f49 for the navy that anchors its headings. The photographs are CC0;
+ * see assets/CREDITS.txt.
+ */
+
+@font-face {
+  font-family: "DM Sans Eerish";
+  src: url(fonts/dmsans-latin.woff2) format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ tokens */
+
+:root {
+  color-scheme: light;
+
+  --color-accent: #2468ff;
+  --color-accent-ink: #1a52d6;
+  --color-accent-deep: #161f49;
+  --color-accent-wash: rgba(36, 104, 255, 0.08);
+  --color-warn-wash: rgba(255, 199, 50, 0.14);
+
+  --color-ok: #00b68c;
+  --color-warn: #f0b429;
+  --color-bad: #e80a2a;
+  --color-idle: #9f9f9f;
+
+  /* The site's blue and a teal that is not its green: green is a verdict
+     here, and a chart series must not carry one. */
+  --series-1: #2468ff;
+  --series-2: #1f9e9e;
+
+  --signal-good: #161f49;
+  --signal-okay: #2468ff;
+  --signal-poor: #b7cbff;
+
+  --color-canvas: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-2: #f7f7f7;
+  --color-line: #e7e7e7;
+  --color-line-strong: #c2c2c2;
+
+  --color-ink: #0e0f0f;
+  --color-ink-2: #404040;
+  --color-ink-3: #747474;
+  --color-title: #0e0f0f;
+  --color-prose: #6e6f6f;
+
+  --color-rail: #161f49;
+  --color-rail-hover: #1f2a5e;
+  --color-rail-ink: #c2c9e8;
+  --color-rail-2: #263272;
+  --color-rail-ink-dim: #7d87b3;
+
+  /* Chrome, for the one badge that wears it: silver along both rims and a
+     white band of light through the middle, which is how a curved piece of
+     metal catches the sky — brightest where it faces you, graying as it
+     turns away at the top and the bottom. The stops are what make it metal
+     rather than a gradient; the range sits high, so it reads as a white
+     badge with a metal edge rather than as a gray one. */
+  --chrome: linear-gradient(180deg, #c6cdd8 0%, #e2e7ee 12%, #fbfcfe 40%,
+                            #ffffff 50%, #fbfcfe 60%, #e2e7ee 88%,
+                            #c6cdd8 100%);
+  --chrome-rim: rgba(84, 96, 116, 0.38);
+  --chrome-ink: #23282f;
+
+  --radius-card: 20px;
+  /* Every control wears this, so they cannot drift apart: large enough to
+     round any of them fully, which turns a short one into eero's pill and a
+     square icon button into a circle. */
+  --radius-control: 100px;
+  --font-sans: "DM Sans Eerish", "DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* The wash over the photograph each page opens on, letting the cards that
+     sit over its lower edge read. The picture itself is chosen per area,
+     below. */
+  --hero-wash: linear-gradient(to bottom, rgba(14, 15, 15, 0.08), rgba(14, 15, 15, 0.22) 55%,
+                               #ffffff 100%);
+  --card-shadow: 0 10px 34px rgba(14, 15, 15, 0.10);
+  --header-shadow: 0 6px 16px -6px rgba(14, 15, 15, 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-accent: #4d82ff;
+    --color-accent-ink: #86a9ff;
+    --color-accent-deep: #2468ff;
+    --color-accent-wash: rgba(77, 130, 255, 0.16);
+
+    --color-canvas: #0e0f0f;
+    --color-surface: #171818;
+    --color-surface-2: #222323;
+    --color-line: #2b2c2c;
+    --color-line-strong: #454646;
+
+    --color-ink: #f5f5f5;
+    --color-ink-2: #c2c2c2;
+    --color-ink-3: #8a8a8a;
+    --color-title: #f5f5f5;
+    --color-prose: #b0b0b0;
+
+    --signal-good: #86a9ff;
+    --signal-okay: #4d82ff;
+    --signal-poor: #2a3f80;
+
+    --hero-wash: linear-gradient(to bottom, rgba(14, 15, 15, 0.55), rgba(14, 15, 15, 0.78) 55%,
+                                 #0e0f0f 100%);
+    --card-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
+    --header-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.7);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-accent: #4d82ff;
+  --color-accent-ink: #86a9ff;
+  --color-accent-deep: #2468ff;
+  --color-accent-wash: rgba(77, 130, 255, 0.16);
+  --color-canvas: #0e0f0f;
+  --color-surface: #171818;
+  --color-surface-2: #222323;
+  --color-line: #2b2c2c;
+  --color-line-strong: #454646;
+  --color-ink: #f5f5f5;
+  --color-ink-2: #c2c2c2;
+  --color-ink-3: #8a8a8a;
+  --color-title: #f5f5f5;
+  --color-prose: #b0b0b0;
+  --signal-good: #86a9ff;
+  --signal-okay: #4d82ff;
+  --signal-poor: #2a3f80;
+  --hero-wash: linear-gradient(to bottom, rgba(14, 15, 15, 0.55), rgba(14, 15, 15, 0.78) 55%,
+                               #0e0f0f 100%);
+  --card-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
+  --header-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.7);
+}
+
+/* -------------------------------------------------------------------- type */
+
+/* The site's own scale: a large heading at a light weight over prose that is
+   bigger and grayer than an admin interface would normally set. Taken from
+   eero.com/eero-difference — roughly 32px headings at weight 500 in near
+   black, and 19px body copy at 1.55 in a warm gray.
+ *
+ * Only the parts that are sentences are raised. Tables, controls, and the
+ * uppercase section labels keep the interface's own sizes: this app puts a
+ * hundred clients in a table, and a marketing page's body size there would
+ * cost a third of the rows on a screen. */
+
+body {
+  font-size: 16px;
+}
+
+[data-part="page-title"] {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--color-ink);
+}
+
+[data-part="card-title"] {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--color-title);
+}
+/* The glyph is drawn at a size the interface's own 13px heading wanted, so
+   beside this one it was a third of its height. Sized in ems, it follows
+   whatever the heading is set to; the shape sits a shade inside its box, so
+   it is drawn at the line box rather than at the cap height. */
+[data-part="card-title"] > svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+/* The prose a card uses to explain itself, and the hint under a control.
+   `:not(td *)` keeps this out of the tables, where a paragraph is a cell's
+   contents rather than an explanation. */
+[data-part="card-body"] p:not(td p):not(th p),
+[data-part="hint"] {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--color-prose);
+}
+
+/* The name beside a switch is not prose, but at 13px next to an 18px hint it
+   read as the smaller of the two. */
+[data-part="control-label"] {
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+/* A notice is a sentence, and is already a paragraph; it keeps its own
+   status color rather than taking the prose gray. */
+[data-part="notice"] {
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.micro-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+[data-part="stat"] .text-2xl {
+  font-size: 38px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* -------------------------------------------------------------------- hero */
+
+/* Each page opens on a photograph, with the first row of cards sitting over
+   its foot the way the site's panels sit over its heroes. The picture is a
+   band painted on a pseudo-element, so `cover` fills the band and not the
+   page; the wash darkens it toward the bottom and hands over to the ground
+   color, so a card's shadow has something to fall on and the join is not a
+   line.
+
+   There are two of these layers, one over the other, and between them they
+   are how the picture changes: see the fade below.
+
+   How far the cards are pushed down is how much of the picture is left in
+   the clear: the padding is most of the band's height, so the first row
+   overlaps only its foot. */
+[data-part="main"] {
+  position: relative;
+  padding-top: 200px;
+}
+[data-part="main"]::before,
+[data-part="main"]::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 380px;
+  background-size: 100% 100%, cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+/* The picture of the page you are on.
+
+   Both layers sit behind the page's content at negative depth, which is what
+   lets the content stay at no depth at all. Nothing in here may start a
+   stacking context: a drawer opened from a card is fixed to the window and
+   has to come out over the header, which it cannot do from inside a stack
+   started in the page. */
+[data-part="main"]::before {
+  z-index: -1;
+  background-image: var(--hero-wash), var(--hero, var(--hero-out, none));
+  background-position: center, var(--hero-at, var(--hero-out-at, center 35%));
+}
+/* And the one you have just left, underneath it, so that the picture above
+   can arrive over it instead of over the bare page. It does not move: the
+   one on top fades in and covers it, which is what makes the change a
+   cross-fade and not a blink through the ground color. */
+[data-part="main"]::after {
+  z-index: -2;
+  background-image: var(--hero-wash), var(--hero-out, none);
+  background-position: center, var(--hero-out-at, center 35%);
+}
+[data-part="main"] > * {
+  position: relative;
+}
+
+/* Arriving. Each area names the same fade differently, and the name is what
+   restarts it: the band is one element from the first page to the last, so
+   an animation it never renames runs once and never again. The name is
+   carried in a custom property because only those reach a pseudo-element.
+
+   Two pages of one area share both the name and the picture, so moving
+   between them animates nothing — there is nothing there to animate. */
+@keyframes hero-in-dashboard { from { opacity: 0 } }
+@keyframes hero-in-connection { from { opacity: 0 } }
+@keyframes hero-in-devices { from { opacity: 0 } }
+@keyframes hero-in-activity { from { opacity: 0 } }
+@keyframes hero-in-settings { from { opacity: 0 } }
+[data-part="main"]::before {
+  animation: var(--hero-fade, hero-hold) 240ms ease-out;
+}
+/* A page fetches before it draws, and until it draws it has not named itself
+   — so for those few frames no area is chosen. The band holds the picture
+   you arrived on and does not animate; the fade happens once, when the page
+   lands and names its own. */
+@keyframes hero-hold { from { opacity: 1 } }
+/* The first page of a visit has nothing to come from, so it does not fade:
+   an empty band that then fills reads as the page still loading. */
+html:not([data-page-prev]) [data-part="main"]::before {
+  animation: none;
+}
+html:not([data-page-prev]) [data-part="main"]::after {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-part="main"]::before {
+    animation: none;
+  }
+}
+@media (min-width: 768px) {
+  [data-part="main"] {
+    padding-top: 260px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* One photograph per navigation area, so moving between them changes the
+   view rather than repeating it. Chosen on the page underneath rather than on
+   the band itself — `:has()` is what lets an ancestor be styled by the route
+   inside it — and grouped exactly as the bar groups the destinations, so a
+   menu and the picture behind it agree.
+
+   The same pictures serve both appearances; dark mode puts a heavier wash
+   over them rather than shipping a second set of five.
+
+   The band is much wider than any of the pictures, so `cover` fills it and a
+   wide window sees a horizontal strip through the middle. `--hero-at` is
+   which strip: each picture names the height that keeps its subject and
+   leaves the framed art and ceilings out of it. */
+[data-part="main"]:has([data-page="dashboard"]) {
+  --hero: url(assets/hero-dashboard.jpg);
+  --hero-fade: hero-in-dashboard;
+}
+[data-part="main"]:has([data-page="internet"]),
+[data-part="main"]:has([data-page="network"]) {
+  --hero: url(assets/hero-connection.jpg);
+  --hero-at: center 45%;
+  --hero-fade: hero-in-connection;
+}
+[data-part="main"]:has([data-page="clients"]),
+[data-part="main"]:has([data-page="profiles"]),
+[data-part="main"]:has([data-page="topology"]) {
+  --hero: url(assets/hero-devices.jpg);
+  --hero-at: center 55%;
+  --hero-fade: hero-in-devices;
+}
+[data-part="main"]:has([data-page="airtime"]),
+[data-part="main"]:has([data-page="insights"]),
+[data-part="main"]:has([data-page="security"]) {
+  --hero: url(assets/hero-activity.jpg);
+  --hero-fade: hero-in-activity;
+}
+[data-part="main"]:has([data-page="settings"]) {
+  --hero: url(assets/hero-settings.jpg);
+  --hero-at: center 18%;
+  --hero-fade: hero-in-settings;
+}
+
+/* The same five pictures again, chosen by the page you have just left rather
+   than the one you are on — `data-page-prev` on <html> is core telling a
+   stylesheet where you came from. The value goes on the element and not on
+   the layer that paints it: a custom property set on a pseudo-element is
+   visible to that one alone, and the layer above reads this too — to hold on
+   to it while a page that has not drawn yet names no area. A crop is named
+   here as well: it is the picture as it was, and it must not shift as it is
+   covered. */
+html[data-page-prev="internet"] [data-part="main"],
+html[data-page-prev="network"] [data-part="main"] {
+  --hero-out: url(assets/hero-connection.jpg);
+  --hero-out-at: center 45%;
+}
+html[data-page-prev="clients"] [data-part="main"],
+html[data-page-prev="profiles"] [data-part="main"],
+html[data-page-prev="topology"] [data-part="main"] {
+  --hero-out: url(assets/hero-devices.jpg);
+  --hero-out-at: center 55%;
+}
+html[data-page-prev="airtime"] [data-part="main"],
+html[data-page-prev="insights"] [data-part="main"],
+html[data-page-prev="security"] [data-part="main"] {
+  --hero-out: url(assets/hero-activity.jpg);
+}
+html[data-page-prev="settings"] [data-part="main"] {
+  --hero-out: url(assets/hero-settings.jpg);
+  --hero-out-at: center 18%;
+}
+html[data-page-prev="dashboard"] [data-part="main"] {
+  --hero-out: url(assets/hero-dashboard.jpg);
+}
+
+/* ------------------------------------------------------------------- shape */
+
+[data-part="card"],
+[data-part="stat"] {
+  border-radius: var(--radius-card);
+  border-color: var(--color-line);
+  box-shadow: var(--card-shadow);
+}
+
+[data-part="card-header"] {
+  padding: 20px 24px 14px;
+}
+[data-part="card-body"] > div {
+  padding: 24px;
+}
+
+/* One radius for everything you can press or type in. Set on the elements
+   and not on the parts a theme is given, because most of the interface's
+   buttons carry no part of their own — going part by part left the ones
+   without at the corner the markup asked for, which is how three different
+   radii ended up on screen at once.
+
+   The exceptions are all things that are a button in the markup without
+   being a control on the page:
+
+   - the checkbox and the radio further down, which eero draws as its own
+     shapes;
+   - the scrim, a button covering the whole window, with no corners to round;
+   - a tab, whose only mark is the rule under it, which a corner would curl
+     away from the strip;
+   - a tile — an eero in the mesh diagram — which is a box you can press and
+     reads as one, not as a lozenge;
+   - a sash — the eero Plus and hardware marks — which is a corner cut off a
+     card. The wrapper around it clips to the card's own radius, so the mark
+     itself stays square; a radius of its own is a second, smaller curve
+     inside the card's. */
+button:not([data-part="scrim"]):not([role="tab"]):not([data-part="tile"]):not([data-part="sash"]),
+[data-part="nav-link"],
+[data-part="link-button"],
+select,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]) {
+  border-radius: var(--radius-control);
+}
+[data-part="submit"] {
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+/* The top bar: white, a hairline under it, the destinations as quiet pills
+   and the current one in the blue's wash. Taller and larger than the
+   interface's own, as the site's is. */
+[data-part="nav"][data-placement="top"] {
+  padding: 12px 20px;
+  gap: 4px;
+}
+[data-part="nav"][data-placement="top"] [data-part="nav-link"] {
+  padding: 8px 11px;
+  font-size: 14px;
+}
+/* The page header is a white bar between the navigation and the
+   photograph: title on the left, controls on the right. It carries a soft
+   shadow so that the page passing underneath it while you scroll is visibly
+   underneath it — eero's own site does not do this, but the site has nothing
+   that stays put over moving content. `relative` so the shadow paints over
+   the photograph rather than beneath it. */
+[data-part="header"] {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-surface);
+  box-shadow: 0 1px 0 var(--color-line), var(--header-shadow);
+}
+[data-part="header"] > div {
+  padding: 16px 24px;
+}
+
+/* ------------------------------------------------------------- the wordmark
+
+   The name beside the mark, set the way eero sets its own: lowercase, in a
+   geometric sans. Poppins is the closest open face to it — CentraNo2 is
+   proprietary — and only the seven letters of the word are shipped, which is
+   why the file is under two kilobytes. Lowercasing is done here rather than
+   in the catalogs: "Eeronaut" is the program's name everywhere else, and a
+   theme does not get to rename it. */
+@font-face {
+  font-family: "Eerish Wordmark";
+  src: url(fonts/poppins-wordmark.woff2) format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Regular rather than semibold, and the file carries only that one weight —
+   so nothing here can ask the browser to fake a heavier one. */
+[data-part="nav-brand"] span {
+  /* At every width. The interface drops the word on a phone and keeps the
+     mark, and this theme has no mark — without this the button that opens
+     the navigation there would be empty. */
+  display: inline;
+  font-family: "Eerish Wordmark", var(--font-sans);
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: -0.005em;
+  text-transform: lowercase;
+  /* In line with the page title under it: measured, the word's first letter
+     stood 5px left of the title's, at every width. */
+  margin-left: 5px;
+}
+
+/* ------------------------------------------------------------ the top bar */
+
+/* Three columns, so the destinations sit centered on the page rather than
+   centered in whatever the brand and the trailing controls left over. The
+   middle column may shrink below its contents, which is what lets the bar
+   still move a destination into its menu when the window is narrow. */
+[data-part="nav"][data-placement="top"] {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
+  align-items: center;
+}
+[data-part="nav"][data-placement="top"] [data-part="nav-strip"] {
+  justify-content: center;
+}
+[data-part="nav"][data-placement="top"] [data-part="nav-extras"] {
+  justify-self: end;
+}
+
+/* On a phone the bar is two things: the mark, which is also what opens the
+   navigation, and the controls at the far end. There is no strip of
+   destinations to center between them, so the three columns become two.
+
+   Keyed on the mark being the folded menu rather than on the width alone: a
+   theme asks for that in its manifest, and the interface says so here by
+   marking the button whole. */
+@media (max-width: 767px) {
+  [data-part="nav"][data-placement="top"]:has([data-part="nav-brand"][data-whole]) {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+/* The network's name is not a destination, so it does not carry a
+   destination's weight: a size under the words beside it. */
+[data-part="network-switcher"] {
+  font-size: 13px;
+}
+
+/* A destination at the top level is a word, not a word with a picture: the
+   glyphs stay inside the menus, where they help tell eight entries apart. */
+[data-part="nav-strip"] > [data-part="nav-link"] > svg {
+  display: none;
+}
+
+/* The menus are destinations too, and were a size smaller than the links
+   beside them. */
+[data-part="nav"][data-placement="top"] [data-part="nav-menu-button"] {
+  padding: 8px 11px;
+  font-size: 14px;
+}
+
+/* ---------------------------------------------------------- form elements
+
+   After the filter controls on eero's own shop: a white pill with a hairline
+   border that turns blue when it has focus, and a square checkbox that fills
+   solid blue with a white tick. Colors read off the page — the same #2468ff
+   the rest of this theme uses, on #d8d8d8 hairlines. */
+
+/* Shape, not scale: the padding is in ems, so a select keeps whatever size
+   the markup asked for. Pinning pixels here made every one of them 37px
+   tall — a drawer's small menu, a table's, all of them — which left the
+   button beside one looking half-finished, the rows of the notifications
+   table uneven, and the appearance buttons shorter than the menu they sit
+   next to.
+
+   The measuring copy behind the self-sizing select is given the same
+   padding; if it is not, the select comes out narrower than the name it has
+   to show and the text is cut off. */
+select, [data-part="select-ghost"] {
+  padding: 0.45em 2.2em 0.45em 0.9em;
+}
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--color-line-strong);
+  background-color: var(--color-surface);
+  background-image: url(assets/chevron.svg);
+  background-repeat: no-repeat;
+  background-position: right 0.75em center;
+  background-size: 1.15em;
+  color: var(--color-ink);
+}
+select:hover:not(:disabled) {
+  border-color: var(--color-ink-3);
+}
+select:focus-visible {
+  border-color: var(--color-accent);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-accent-wash);
+}
+
+/* Named the same way round as the radius above: every field except the
+   ones that are not boxes. An <input> with no type attribute is a text
+   field, and the list of types this used to name did not match one. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+textarea {
+  border: 1px solid var(--color-line-strong);
+  padding: 0.5em 0.9em;
+}
+/* The one multi-line field keeps a rectangle: a pill would run the first and
+   last lines of a list into its curve. It takes the card's corner, so the
+   theme has one shape for surfaces and one for controls and no third. */
+textarea {
+  border-radius: var(--radius-card);
+}
+input:focus-visible, textarea:focus-visible {
+  border-color: var(--color-accent);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-accent-wash);
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 6px;
+  border: 1px solid var(--color-line-strong);
+  background-color: var(--color-surface);
+  transition: background-color 120ms, border-color 120ms;
+}
+input[type="checkbox"]:checked {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  background-image: url(assets/check.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 15px;
+}
+input[type="checkbox"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-accent-wash);
+}
+input[type="checkbox"]:disabled {
+  opacity: 0.45;
+}
+
+/* The one radio in the app, given eero's shape: a ring that fills solid blue
+   with a white center, matching the checkbox beside it rather than the
+   browser's default dot. */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--color-line-strong);
+  background-color: var(--color-surface);
+  transition: background-color 120ms, border-color 120ms, box-shadow 120ms;
+}
+input[type="radio"]:checked {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-surface);
+}
+input[type="radio"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-accent-wash);
+}
+input[type="radio"]:checked:focus-visible {
+  box-shadow: inset 0 0 0 4px var(--color-surface), 0 0 0 3px var(--color-accent-wash);
+}
+input[type="radio"]:disabled {
+  opacity: 0.45;
+}
+
+/* The trailing end of the bar is the bell and nothing else. The About
+   button has a better home: the About dialog is what the name and mark on
+   the left open, so it needs no second place in a row this narrow. */
+[data-part="nav"][data-placement="top"] [data-part="nav-about"] {
+  display: none;
+}
+
+/* The search box is a button that stands in for a field, so it is sized
+   like one; the pill it wears is every control's. */
+[data-part="search"] {
+  padding: 7px 14px;
+  font-size: 13px;
+}
+
+/* ------------------------------------------------------- the plus badge
+
+   The one place the interface says a paid tier is in force. eero's own site
+   would not draw that as a hollow outline, so here it is a solid pill with a
+   little depth: a top highlight, a shadow under the lower edge, and a glint
+   that travels around its rim every few seconds and is absent the rest of
+   the time. The badge that says there is no subscription keeps the quiet
+   outline it has — there is nothing to celebrate. */
+[data-part="plus-status"][data-active] {
+  position: relative;
+  isolation: isolate;
+  border-color: var(--chrome-rim) !important;
+  color: var(--chrome-ink) !important;
+  font-weight: 600;
+  /* Stamped into the metal rather than printed on it: a light edge under
+     the letters is what the eye reads as engraving, and it lifts the words
+     off the darkest band of the gradient. */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  /* Polished metal rather than paint: light at the top, a dark band where
+     the curve turns away, and a second light edge under it. Five stops,
+     because chrome is the horizon reflected in something round — two would
+     be a gradient and would read as one. */
+  background-image: var(--chrome);
+  /* Cool at both edges, since both are metal turning away. */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55),
+              inset 0 -1px 0 rgba(84, 96, 116, 0.26),
+              0 1px 2px rgba(14, 15, 15, 0.18);
+}
+/* The state dot stays the interface's own green: on metal it is the one
+   thing saying which state this is, and it has the contrast for it. */
+/* Two sheens, and the rim only: the ring is what is left of a padded box
+   once its own middle is masked out of it, and a sheen sweeps across that.
+   The badge has two pseudo-elements and this uses both — one bright and
+   narrow going one way, one softer and wider going the other, on periods
+   that do not divide into each other, so they cross at a different place
+   every time instead of beating in step. */
+[data-part="plus-status"][data-active]::before,
+[data-part="plus-status"][data-active]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background-size: 320% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+/* `background-image`, not `background`: the shorthand would reset the
+   `background-size` set above it, and a sheen the size of the badge has
+   nowhere to travel — which is exactly what happened, and the badge sat
+   still. */
+[data-part="plus-status"][data-active]::after {
+  background-image: linear-gradient(100deg, rgba(255, 255, 255, 0) 42%,
+                                    rgba(255, 255, 255, 1) 50%,
+                                    rgba(255, 255, 255, 0) 58%);
+  animation: plus-glint 6s ease-in-out infinite;
+}
+[data-part="plus-status"][data-active]::before {
+  background-image: linear-gradient(80deg, rgba(255, 255, 255, 0) 30%,
+                                    rgba(255, 255, 255, 0.7) 50%,
+                                    rgba(255, 255, 255, 0) 70%);
+  animation: plus-glint-back 7.4s ease-in-out infinite;
+}
+/* Most of the cycle is the wait. A sheen that never stops moving is a
+   loading bar, which is not what this is. */
+@keyframes plus-glint {
+  0%, 62% { background-position: 170% 0; }
+  100% { background-position: -70% 0; }
+}
+/* The other way, and slower to start: the two are never traveling
+   together for long. */
+@keyframes plus-glint-back {
+  0%, 70% { background-position: -70% 0; }
+  100% { background-position: 170% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-part="plus-status"][data-active]::before,
+  [data-part="plus-status"][data-active]::after {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------- mark
+
+   No mark, only the word. The interface's own logo is an <img> in the
+   shell's markup, which a theme cannot swap out, so it is hidden and the
+   brand button is the wordmark alone — the way eero's own site leads with
+   its name rather than a picture. */
+[data-part="nav-brand"] img {
+  display: none;
+}

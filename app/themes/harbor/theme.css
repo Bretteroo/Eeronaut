@@ -1,0 +1,198 @@
+/* Harbor
+ *
+ * The look Eeronaut shipped with, as a theme of its own. Palette taken from
+ * UniFi Network Application 10.6.101's own token set, so the two products
+ * read as the same visual language rather than an approximation. Ubiquiti's
+ * neutral ramp is N0-N70 light and DN0-DN60 dark; P20 (#006fff) is the
+ * primary action color. Names are semantic rather than positional so the
+ * mapping is legible without the original ramp in front of you.
+ *
+ * Almost every rule here sets a token the interface already reads, because
+ * the interface's own defaults are Harbor. The one exception is at the foot
+ * of the file: a filled button takes a deeper blue than the ramp's P20, which
+ * is a shade too light to carry white words at the size they are set in.
+ */
+
+/* Light is the default and is defined on bare :root, so a viewer with no
+   explicit preference still gets a complete palette. */
+:root {
+  color-scheme: light;
+
+  --color-accent: #006fff;        /* P20 */
+  /* P10, a step deeper than the ramp's own so that it clears 4.5:1 where
+     the interface sets it small on the accent's own wash. */
+  --color-accent-ink: #004ba8;
+  --color-accent-deep: #003c9e;   /* P0  */
+  --color-accent-wash: rgba(0, 111, 255, 0.05);
+  /* A tint of the warn color, for the firmware panel. An alpha over whatever
+     surface is behind it, like the accent wash above, so it needs no dark
+     override: 8% of amber reads as a tint on the light ground and as a warm
+     lift on the dark one. */
+  --color-warn-wash: rgba(245, 166, 35, 0.08);
+
+  --color-ok: #39cc64;            /* P40 */
+  --color-warn: #f5a623;          /* P60 */
+  --color-bad: #f03a3e;           /* P70 */
+  --color-idle: #a4a7b5;          /* DN10 */
+
+  /* Chart series colors: blue and teal. The second series was a burnt
+     orange, which next to a status palette that uses red and amber for
+     trouble could read as something being wrong; a purple was tried and did
+     not sit well. Teal carries no verdict and is the usual partner for blue
+     in a download/upload pair.
+
+     One definition for both appearances: the pair passes the dataviz palette
+     checker on white and on the dark surface alike. Lightness band, chroma
+     floor, CVD separation (deutan ΔE 21.3, tritan 7.2), normal-vision floor
+     (ΔE 22.8) and contrast all pass, and the teal stays clear of the status
+     green (worst pair ΔE 15.4 with it added). Assigned in fixed order and
+     never cycled; a third series would need re-validating rather than being
+     invented here. */
+  --series-1: #006fff;   /* download / primary */
+  --series-2: #10a5a0;   /* upload / secondary */
+
+  /* Signal strength is ordinal, so it gets one hue stepped light to dark
+     rather than three hues: dark is good, light is poor. Each appearance has
+     its own steps, since a step light enough to read on the dark surface
+     washes out on white. Checked with the same tool: on white, protan ΔE
+     18.8 and normal ΔE 20.4 between adjacent steps, with the lightest under
+     3:1 and so always drawn with its count in the legend beside it; on the
+     dark surface protan 16.7, normal 18.1, every step over 3:1. Not status
+     colors on purpose: a house always has a far-off thermostat, and a red
+     slice on the dashboard for it would be an alarm with nothing to do
+     about it. */
+  --signal-good: #0047b3;
+  --signal-okay: #2f8cff;
+  --signal-poor: #9fc8ff;
+
+  --color-canvas: #f4f4f5;        /* N30 */
+  --color-surface: #ffffff;       /* N0  */
+  --color-surface-2: #f8f8f9;     /* N20 */
+  --color-line: #e5e7ed;          /* N50 */
+  --color-line-strong: #d6d9e2;   /* N60 */
+
+  --color-ink: #151725;           /* DN60 */
+  --color-ink-2: #333543;         /* DN40 */
+  /* DN20 is #7e8190 and measures 3.9:1 on white, under the line for the
+     captions and table headers it paints. One step deeper. */
+  --color-ink-3: #696c7a;
+
+  --color-rail: #151725;
+  --color-rail-hover: #242635;
+  --color-rail-ink: #9aa3ad;
+  /* The About button's resting surface and the version line's ink, both
+     in the rail. The same in both appearances: the rail itself is. */
+  --color-rail-2: #323842;
+  /* Dim, not unreadable: the ramp's own value is 3.0:1 on the rail. */
+  --color-rail-ink-dim: #8791a0;
+
+  --radius-card: 8px;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+               Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Dark for viewers whose system asks for it, unless they have explicitly
+   chosen light. Only the tokens change; no rule redefines a color outside
+   this block or the one below it. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-canvas: #151725;      /* DN60 */
+    --color-surface: #1c1e2d;     /* DN55 */
+    --color-surface-2: #242635;   /* DN50 */
+    --color-line: #333543;        /* DN40 */
+    --color-line-strong: #525461; /* DN30 */
+
+    --color-ink: #ffffff;
+    --color-ink-2: #c2c4ce;       /* DN0 */
+    --color-ink-3: #8b8e9c;
+
+    /* The accent reads as a link on a dark surface, so in the dark it is the
+       light end of the ramp rather than the deep one: P10 and P0 on this
+       canvas measure 2.4:1 and 2.0:1, which is a link nobody can see. */
+    --color-accent-ink: #66adff;
+    --color-accent-deep: #a8ccff;
+    --color-rail-ink-dim: #8791a0;
+
+    --color-rail: #0b1527;        /* BN10 */
+    --color-rail-hover: #1a2535;  /* BN40 */
+    --color-rail-ink: #9aa3ad;
+
+    --signal-good: #006fff;
+    --signal-okay: #66adff;
+    --signal-poor: #c7e1ff;
+  }
+}
+
+/* Explicit choice wins in both directions. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-canvas: #151725;
+  --color-surface: #1c1e2d;
+  --color-surface-2: #242635;
+  --color-line: #333543;
+  --color-line-strong: #525461;
+  --color-ink: #ffffff;
+  --color-ink-2: #c2c4ce;
+  --color-ink-3: #8b8e9c;
+
+  /* The accent reads as a link on a dark surface, so in the dark it is the
+     light end of the ramp rather than the deep one: P10 and P0 on this
+     canvas measure 2.4:1 and 2.0:1, which is a link nobody can see. */
+  --color-accent-ink: #66adff;
+  --color-accent-deep: #a8ccff;
+  --color-rail-ink-dim: #8791a0;
+
+  --color-rail: #0b1527;
+  --color-rail-hover: #1a2535;
+  --color-rail-ink: #9aa3ad;
+  --signal-good: #006fff;
+  --signal-okay: #66adff;
+  --signal-poor: #c7e1ff;
+}
+
+/* ------------------------------------------------------- filled controls
+
+   A button filled with the accent carries white words, and the accent this
+   theme is built on is a shade too light to hold them: white on it measures
+   just under the 4.5:1 an audit asks for at the size these buttons are set
+   in. The palette keeps its own blue — it is the color of everything else
+   here — and the fill alone goes a step deeper, by naming the accent
+   something else for the length of the button. The interface builds the fill
+   out of `--color-accent` in a custom property of its own, so shadowing the
+   token reaches it; a rule on `background-color` would also have painted the
+   destructive tone, which is meant to have no fill at all. */
+[data-part="submit"],
+[data-part="link-button"] {
+  --color-accent: #005ce0;
+  --color-accent-ink: #0049b8;
+}
+
+/* The destination you are on is a filled pill in the rail, with white words
+   on it — the same shortfall as the button above, so the same deeper blue. */
+[data-part="nav-link"][aria-current="page"] {
+  --color-accent: #005ce0;
+}
+
+/* The mark that says a subscription is in force says it in the status green,
+   which is a fill color: as words on a white card it is under 2.5:1. Deeper
+   where the card is light, the ramp's own where it is dark, and only here —
+   the dots and the chart series are untouched. */
+[data-part="plus-status"] {
+  --color-ok: #177a3c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-part="plus-status"] {
+    --color-ok: #39cc64;
+  }
+}
+:root[data-theme="dark"] [data-part="plus-status"] {
+  --color-ok: #39cc64;
+}
+
+/* A link is words, so it takes the accent's text color rather than its fill:
+   the fill blue is under 4.5:1 as text on the page, on a card, and on the
+   tinted banner that announces a firmware update. Hovering thickens the
+   underline, since the color it used to deepen to is now the resting one. */
+.link { color: var(--color-accent-ink); }
+.link:hover { color: var(--color-accent-ink); text-decoration-thickness: 2px; }
