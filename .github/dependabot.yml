@@ -15,6 +15,12 @@ updates:
     groups:
       python:
         update-types: [minor, patch]
+    # pydantic requires one exact pydantic-core, so raising pydantic-core on
+    # its own can't be installed. Dependabot updates this file a line at a
+    # time and can't move the two together: when pydantic itself updates,
+    # regenerate requirements.txt instead (the command is at its top).
+    ignore:
+      - dependency-name: pydantic-core
 
   # The interface: app/frontend/package.json and its lock file.
   - package-ecosystem: npm
