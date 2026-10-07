@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ---- frontend -------------------------------------------------------------
-FROM --platform=$BUILDPLATFORM node:25-alpine AS web
+FROM --platform=$BUILDPLATFORM node:26-alpine AS web
 WORKDIR /src
 COPY app/frontend/package*.json ./
 RUN npm ci --no-audit --no-fund
