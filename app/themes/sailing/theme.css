@@ -64,6 +64,12 @@
   --series-1: #145a78;
   --series-2: #4f9bab;
 
+  /* The amber and the teal as words: under 3:1 as 12px text on a card, so
+     these are the same hues taken down to 4.5:1. The green, the red and the
+     blue already read and need nothing. */
+  --color-warn-ink: #916504;
+  --series-2-ink: #277786;
+
   --signal-good: #0d3a4f;
   --signal-okay: #2f7f9c;
   --signal-poor: #b9d3dd;
@@ -165,6 +171,10 @@
     --series-1: #58b0cf;
     --series-2: #7fd4c8;
 
+    /* Light enough to read as they are. */
+    --color-warn-ink: #d2a75a;
+    --series-2-ink: #7fd4c8;
+
     --signal-good: #9fe0f2;
     --signal-okay: #58b0cf;
     --signal-poor: #24566b;
@@ -218,6 +228,10 @@
 
   --series-1: #58b0cf;
   --series-2: #7fd4c8;
+
+  /* Light enough to read as they are. */
+  --color-warn-ink: #d2a75a;
+  --series-2-ink: #7fd4c8;
 
   --signal-good: #9fe0f2;
   --signal-okay: #58b0cf;

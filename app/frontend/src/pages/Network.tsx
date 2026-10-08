@@ -466,7 +466,7 @@ function UplinkVlan({ lan, busy, run }: {
         )}
 
         {on && !valid && (
-          <p className="pl-7 text-[12px] text-[var(--color-bad)]">
+          <p className="pl-7 text-[12px] text-[var(--color-bad-ink,var(--color-bad))]">
             {t('network.vlan_id_not_valid_enter')}
           </p>
         )}
@@ -590,10 +590,10 @@ function BandPause({ busy, runIn, say }: {
             <>
               <span className="micro-label block">{t('network.resumes')}</span>
               <span className="tabular-nums text-[13px] font-semibold
-                               text-[var(--color-warn)]">{left}</span>
+                               text-[var(--color-warn-ink,var(--color-warn))]">{left}</span>
             </>
           ) : (
-            <span className="text-[12px] text-[var(--color-warn)]">{t('network.restricted')}</span>
+            <span className="text-[12px] text-[var(--color-warn-ink,var(--color-warn))]">{t('network.restricted')}</span>
           )}
         </span>
       )}
@@ -1937,7 +1937,7 @@ export function Network({ show = 'network' }: { show?: 'internet' | 'network' })
             )}
           </span>
           {pwErr && (
-            <p className="mt-1 text-right text-[12px] text-[var(--color-bad)]">
+            <p className="mt-1 text-right text-[12px] text-[var(--color-bad-ink,var(--color-bad))]">
               {pwErr}
             </p>
           )}
@@ -2166,7 +2166,7 @@ export function Network({ show = 'network' }: { show?: 'internet' | 'network' })
               </InlineAction>
               <RebootMark title={t('interrupt.guest_reconnect')} />
               {guestPwErr && (
-                <span className="w-full text-right text-[12px] text-[var(--color-bad)]">
+                <span className="w-full text-right text-[12px] text-[var(--color-bad-ink,var(--color-bad))]">
                   {guestPwErr}
                 </span>
               )}

@@ -112,12 +112,13 @@ every 1.x. The engine this Eeronaut runs is in `/api/health`, as
 | Engine | Eeronaut | What changed |
 |---|---|---|
 | 1.0 | 1.0.0 | The first: the manifest, parts, tokens, and rules in this file. |
+| 1.1 | 1.0.1 | Text versions of the status and series colors: `--color-ok-ink`, `--color-warn-ink`, `--color-bad-ink`, `--series-1-ink`, `--series-2-ink`. |
 
 ## The manifest
 
 ```json
 {
-  "engine": "1.0",
+  "engine": "1.1",
   "id": "harbor",
   "version": "1.0.0",
   "title": "Harbor",
@@ -186,8 +187,10 @@ restyles the whole interface; setting some restyles that much.
 | `--color-accent-wash` | a tint of the accent, for selected rows and chips |
 | `--color-ok`, `--color-warn`, `--color-bad`, `--color-idle` | status. Red means something is wrong |
 | `--color-warn-wash` | a tint of warn, for the firmware panel |
+| `--color-ok-ink`, `--color-warn-ink`, `--color-bad-ink` | status as words: a state under a device, a warning line, an error. Set them where the status colors are too light to read as small text, 4.5:1 on `--color-surface-2`. Each one unset uses its status color (since 1.1) |
 | `--color-rail`, `--color-rail-hover`, `--color-rail-ink`, `--color-rail-2`, `--color-rail-ink-dim` | the navigation rail, when there is one |
 | `--series-1`, `--series-2` | chart series: download, upload. Choose them as a pair that can be told apart in both appearances, including by a color-blind reader, and keep them away from red and orange, which read as trouble |
+| `--series-1-ink`, `--series-2-ink` | a series as words, such as a band's name in its tag. Same rule; unset uses the series color (since 1.1) |
 | `--signal-good`, `--signal-okay`, `--signal-poor` | one hue stepped light to dark |
 | `--radius-card` | the corner of a card |
 | `--font-sans` | the type |

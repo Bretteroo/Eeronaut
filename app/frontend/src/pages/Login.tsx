@@ -141,7 +141,7 @@ export function Login({ onDone, auth }: { onDone: () => void; auth?: AuthState |
           )}
 
           {error && (
-            <p role="alert" className="mt-3 rounded border border-[var(--color-bad)] bg-[var(--color-accent-wash)] px-3 py-2 text-[13px] text-[var(--color-bad)]">
+            <p role="alert" className="mt-3 rounded border border-[var(--color-bad)] bg-[var(--color-accent-wash)] px-3 py-2 text-[13px] text-[var(--color-bad-ink,var(--color-bad))]">
               {error}
             </p>
           )}

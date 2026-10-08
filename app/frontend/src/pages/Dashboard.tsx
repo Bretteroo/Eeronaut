@@ -411,6 +411,14 @@ function stripItems(eeros: Eero[]): StripItem[] {
 const VERDICT_COLOR: Record<Verdict, string> = {
   ok: 'var(--color-ok)', warn: 'var(--color-warn)', bad: 'var(--color-bad)',
 }
+/* The same, for the words under a device. A status color is chosen as a
+   mark, and as 11px text several themes' amber and red are too light to
+   read; a theme that says nothing keeps the mark's own color. */
+const VERDICT_INK: Record<Verdict, string> = {
+  ok: 'var(--color-ok-ink, var(--color-ok))',
+  warn: 'var(--color-warn-ink, var(--color-warn))',
+  bad: 'var(--color-bad-ink, var(--color-bad))',
+}
 
 function EeroStrip({ eeros }: { eeros: Eero[] }) {
   const items = stripItems(eeros)
@@ -461,7 +469,7 @@ function EeroStrip({ eeros }: { eeros: Eero[] }) {
             {i.verdict !== 'ok' && (
               <span data-strip-state
                     className="w-full truncate text-[11px] leading-snug"
-                    style={{ color: VERDICT_COLOR[i.verdict] }}>
+                    style={{ color: VERDICT_INK[i.verdict] }}>
                 {i.state ?? t('dashboard.not_reporting')}
               </span>
             )}

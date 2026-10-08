@@ -187,7 +187,7 @@ export function DomainList({
         )}
 
         {dropped.length > 0 && (
-          <p className="text-[12px] leading-relaxed text-[var(--color-warn)]">
+          <p className="text-[12px] leading-relaxed text-[var(--color-warn-ink,var(--color-warn))]">
             {tn('domains.dropped', dropped.length)}{' '}
             <span className="font-mono">{dropped.slice(0, 6).join(', ')}</span>
             {dropped.length > 6

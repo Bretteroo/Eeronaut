@@ -52,6 +52,13 @@ const nearestIndex = (times: number[], at: number) => {
 export const bandTone = (b: string) =>
   b.startsWith('2') ? 'var(--series-2)' : b.startsWith('6') ? 'var(--color-accent)' : 'var(--series-1)'
 
+/* The band's name in its tag: the tone's text color, since a series color is
+   picked for a 2px line and several are under 4.5:1 as 11px words. */
+const bandInk = (b: string) =>
+  b.startsWith('2') ? 'var(--series-2-ink, var(--series-2))'
+    : b.startsWith('6') ? 'var(--color-accent-ink)'
+    : 'var(--series-1-ink, var(--series-1))'
+
 /** The shared look of the two filter groups in this card's header. */
 export function Pick({ on, onClick, children }:
   { on: boolean; onClick: () => void; children: ReactNode }) {
@@ -206,7 +213,7 @@ export function RadioAnalytics() {
                 <span className="text-[13px] font-medium">
                   {r.node}
                   <span className="ml-2 rounded px-1.5 text-[11px] font-semibold"
-                        style={{ color: bandTone(r.band), border: `1px solid ${bandTone(r.band)}` }}>
+                        style={{ color: bandInk(r.band), border: `1px solid ${bandTone(r.band)}` }}>
                     {r.band}
                   </span>
                   <span className="ml-2 text-[12px] text-[var(--color-ink-3)]">
@@ -225,7 +232,7 @@ export function RadioAnalytics() {
                   eero's own analytics carries these as acs_events with a from
                   and a to channel, so this is what its subscribers see too. */}
               {r.channel_changes.length > 0 && (
-                <ul className="mb-1 text-[12px] text-[var(--color-warn)]">
+                <ul className="mb-1 text-[12px] text-[var(--color-warn-ink,var(--color-warn))]">
                   {r.channel_changes.map((ch) => (
                     <li key={ch.t} data-channel-change>
                       {t('radio_analytics.channel_change_line',

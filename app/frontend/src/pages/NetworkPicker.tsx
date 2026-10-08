@@ -63,7 +63,7 @@ export function NetworkPicker({ onDone }: { onDone: () => void }) {
         </div>
 
         {err && (
-          <p role="alert" className="mb-3 text-[13px] text-[var(--color-bad)]">{err}</p>
+          <p role="alert" className="mb-3 text-[13px] text-[var(--color-bad-ink,var(--color-bad))]">{err}</p>
         )}
 
         {!nets ? (

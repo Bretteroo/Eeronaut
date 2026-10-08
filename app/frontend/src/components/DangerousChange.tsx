@@ -125,7 +125,7 @@ export function DangerousChange({
       />
 
       {error && (
-        <p role="alert" className="mt-2 text-[12px] text-[var(--color-bad)]">{error}</p>
+        <p role="alert" className="mt-2 text-[12px] text-[var(--color-bad-ink,var(--color-bad))]">{error}</p>
       )}
 
       <div className="mt-3 flex gap-2">

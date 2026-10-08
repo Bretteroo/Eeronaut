@@ -49,7 +49,7 @@ DEFAULT = "harbor"
 # only adds: a new part, a new manifest field. A major one breaks something a
 # theme may rely on, a part renamed or gone, and every theme built for the
 # one before is refused rather than half-drawn. THEMES.md keeps the history.
-ENGINE = (1, 0)
+ENGINE = (1, 1)
 ENGINE_VERSION = f"{ENGINE[0]}.{ENGINE[1]}"
 
 MANIFEST = "theme.json"

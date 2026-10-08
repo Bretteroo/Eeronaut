@@ -595,7 +595,7 @@ export function ClientDetail({ mac, onChanged }:
           {d.radio.tx_retry_pct != null && (
             <Row label={t('client_detail.transmit_retries')}>
               <span className={d.radio.tx_retry_pct > 20
-                ? 'text-[var(--color-warn)]' : undefined}>
+                ? 'text-[var(--color-warn-ink,var(--color-warn))]' : undefined}>
                 {d.radio.tx_retry_pct}%
               </span>
             </Row>
@@ -879,7 +879,7 @@ function ProfilePicker({ mac, current, onDone }:
         ))}
       </select>
       </span>
-      {err && <span className="text-[11px] text-[var(--color-bad)]">{err}</span>}
+      {err && <span className="text-[11px] text-[var(--color-bad-ink,var(--color-bad))]">{err}</span>}
     </span>
   )
 }

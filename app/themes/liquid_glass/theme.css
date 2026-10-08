@@ -43,6 +43,17 @@
   --series-1: #007aff;
   --series-2: #1aa6a6;
 
+  /* The same colors as words, for the 11 and 12px text that wears them.
+     These system colors are made to be seen as marks, and on the glass every
+     one of them was under 4.5:1 as text, the amber under 2:1. The nearest of
+     each, same hue, that reads at 4.8:1 on a card over the lightest part of
+     the ground, with room left for what shows through. */
+  --color-ok-ink: #017a2c;
+  --color-warn-ink: #975c04;
+  --color-bad-ink: #d50409;
+  --series-1-ink: #0165d5;
+  --series-2-ink: #057575;
+
   --signal-good: #0a4fb5;
   --signal-okay: #3b8cff;
   --signal-poor: #a8cbff;
@@ -107,6 +118,13 @@
     --color-ink-3: #868c9b;
     --brand-shadow: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
 
+    /* In the dark only the red and the blue need lifting to read as words. */
+    --color-ok-ink: #34c759;
+    --color-warn-ink: #ff9f0a;
+    --color-bad-ink: #ff5345;
+    --series-1-ink: #3e8fff;
+    --series-2-ink: #1aa6a6;
+
     --signal-good: #0a84ff;
     --signal-okay: #6db3ff;
     --signal-poor: #c9e0ff;
@@ -136,6 +154,13 @@
   --color-ink-2: #c3c8d4;
   --color-ink-3: #868c9b;
   --brand-shadow: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+  /* In the dark only the red and the blue need lifting to read as words. */
+  --color-ok-ink: #34c759;
+  --color-warn-ink: #ff9f0a;
+  --color-bad-ink: #ff5345;
+  --series-1-ink: #3e8fff;
+  --series-2-ink: #1aa6a6;
+
   --signal-good: #0a84ff;
   --signal-okay: #6db3ff;
   --signal-poor: #c9e0ff;

@@ -51,6 +51,17 @@
   --series-1: #006fff;   /* download / primary */
   --series-2: #10a5a0;   /* upload / secondary */
 
+  /* The same colors as words. Each one above is chosen to be seen as a dot,
+     a line or a fill, and as 11 or 12px text on a white card the green,
+     amber and teal are under 3:1 and the red and blue just under 4.5:1.
+     These are the nearest of each, same hue, that read at 4.5:1 on the
+     raised surface; everything that is not text keeps the color above. */
+  --color-ok-ink: #028235;
+  --color-warn-ink: #9b6604;
+  --color-bad-ink: #dc212d;
+  --series-1-ink: #0169f1;
+  --series-2-ink: #017e7a;
+
   /* Signal strength is ordinal, so it gets one hue stepped light to dark
      rather than three hues: dark is good, light is poor. Each appearance has
      its own steps, since a step light enough to read on the dark surface
@@ -118,6 +129,14 @@
     --color-rail-hover: #1a2535;  /* BN40 */
     --color-rail-ink: #9aa3ad;
 
+    /* On the dark surface the colors read as words as they are, except
+       the red and the blue, which are lifted a step. */
+    --color-ok-ink: #39cc64;
+    --color-warn-ink: #f5a623;
+    --color-bad-ink: #ff504f;
+    --series-1-ink: #458dff;
+    --series-2-ink: #10a5a0;
+
     --signal-good: #006fff;
     --signal-okay: #66adff;
     --signal-poor: #c7e1ff;
@@ -146,6 +165,14 @@
   --color-rail: #0b1527;
   --color-rail-hover: #1a2535;
   --color-rail-ink: #9aa3ad;
+  /* On the dark surface the colors read as words as they are, except
+     the red and the blue, which are lifted a step. */
+  --color-ok-ink: #39cc64;
+  --color-warn-ink: #f5a623;
+  --color-bad-ink: #ff504f;
+  --series-1-ink: #458dff;
+  --series-2-ink: #10a5a0;
+
   --signal-good: #006fff;
   --signal-okay: #66adff;
   --signal-poor: #c7e1ff;

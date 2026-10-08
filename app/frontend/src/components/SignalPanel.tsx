@@ -148,7 +148,7 @@ export function SignalPanel({ dsn, fallbackName, onClose }: {
               hover, so the two cannot disagree. */}
           {accessoryStateHelp(d) && (
             <p role="alert"
-               className="mb-3 rounded border border-[var(--color-warn)] px-3 py-2 text-[13px] text-[var(--color-warn)]">
+               className="mb-3 rounded border border-[var(--color-warn)] px-3 py-2 text-[13px] text-[var(--color-warn-ink,var(--color-warn))]">
               {accessoryStateHelp(d)}
             </p>
           )}
