@@ -522,6 +522,7 @@
   "firmware.update_available": "Доступне оновлення мікропрограми.",
   "firmware.update_now": "Оновити зараз",
   "firmware.update_started": "Оновлення почалося. Усі eero перезапускаються; мережа відновиться за кілька хвилин.",
+  "firmware.updating": "Оновлення…",
   "firmware.version_available": "Доступна мікропрограма {version}.",
   "firmware.your_update_window": "вашого вікна оновлень",
   "inbound_access.443_3000_3002": "443 або 3000-3002",

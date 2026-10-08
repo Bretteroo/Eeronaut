@@ -522,6 +522,7 @@
   "firmware.update_available": "Dostępna jest aktualizacja oprogramowania sprzętowego.",
   "firmware.update_now": "Aktualizuj teraz",
   "firmware.update_started": "Aktualizacja rozpoczęta. Wszystkie urządzenia eero uruchomią się ponownie, a sieć wróci za kilka minut.",
+  "firmware.updating": "Aktualizowanie…",
   "firmware.version_available": "Dostępne jest oprogramowanie sprzętowe {version}.",
   "firmware.your_update_window": "Twoim oknie aktualizacji",
   "inbound_access.443_3000_3002": "443 lub 3000-3002",

@@ -500,6 +500,7 @@
   "firmware.update_available": "En firmwareuppdatering är tillgänglig.",
   "firmware.update_now": "Uppdatera nu",
   "firmware.update_started": "Uppdateringen har startat. Alla eero-enheter startar om och nätverket är tillbaka om några minuter.",
+  "firmware.updating": "Uppdaterar…",
   "firmware.version_available": "Firmware {version} är tillgänglig.",
   "firmware.your_update_window": "ditt uppdateringsfönster",
   "inbound_access.443_3000_3002": "443 eller 3000-3002",

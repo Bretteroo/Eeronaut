@@ -500,6 +500,7 @@
   "firmware.update_available": "Une mise à jour du micrologiciel est disponible.",
   "firmware.update_now": "Mettre à jour",
   "firmware.update_started": "Mise à jour lancée. Tous les eeros redémarrent ; le réseau revient dans quelques minutes.",
+  "firmware.updating": "Mise à jour…",
   "firmware.version_available": "Le micrologiciel {version} est disponible.",
   "firmware.your_update_window": "votre plage de mise à jour",
   "inbound_access.443_3000_3002": "443, ou 3000-3002",

@@ -500,6 +500,7 @@
   "firmware.update_available": "Elérhető egy firmware-frissítés.",
   "firmware.update_now": "Frissítés most",
   "firmware.update_started": "A frissítés elindult. Minden eero újraindul; a hálózat néhány perc múlva visszatér.",
+  "firmware.updating": "Frissítés…",
   "firmware.version_available": "A(z) {version} firmware elérhető.",
   "firmware.your_update_window": "a frissítési időablakodban",
   "inbound_access.443_3000_3002": "443, vagy 3000-3002",

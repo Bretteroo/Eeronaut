@@ -500,6 +500,7 @@
   "firmware.update_available": "È disponibile un aggiornamento del firmware.",
   "firmware.update_now": "Aggiorna ora",
   "firmware.update_started": "Aggiornamento avviato. Tutti gli eero si riavviano; la rete tornerà attiva tra pochi minuti.",
+  "firmware.updating": "Aggiornamento…",
   "firmware.version_available": "È disponibile il firmware {version}.",
   "firmware.your_update_window": "la fascia oraria di aggiornamento",
   "inbound_access.443_3000_3002": "443, oppure 3000-3002",

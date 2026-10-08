@@ -500,6 +500,7 @@
   "firmware.update_available": "Laiteohjelmistopäivitys on saatavilla.",
   "firmware.update_now": "Päivitä nyt",
   "firmware.update_started": "Päivitys aloitettu. Kaikki eerot käynnistyvät uudelleen, ja verkko palaa muutamassa minuutissa.",
+  "firmware.updating": "Päivitetään…",
   "firmware.version_available": "Laiteohjelmisto {version} on saatavilla.",
   "firmware.your_update_window": "päivitysikkunasi aikana",
   "inbound_access.443_3000_3002": "443 tai 3000-3002",

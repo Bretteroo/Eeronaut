@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api, ApiError } from '../lib/api'
+import { api, ApiError, freshReads } from '../lib/api'
 import { Notice, ReleaseNotesLink, SubmitButton } from './primitives'
 import { useClock } from '../lib/clock'
 import { t, tx } from '../i18n'
@@ -30,14 +30,60 @@ export interface Updates {
   firmware_versions?: string[]
 }
 
-/** Reads the update state, and re-reads it after starting one. */
+/** Reads the update state, and re-reads it after starting one. A read that
+ *  fails keeps the last answer: during an install the network is down, and
+ *  dropping the notice then said the update was over when it had barely
+ *  begun. */
 export function useUpdates() {
   const [updates, setUpdates] = useState<Updates | null>(null)
   const load = useCallback(() =>
     api.get<Updates>('/api/network/updates')
-      .then(setUpdates).catch(() => setUpdates(null)), [])
+      .then(setUpdates).catch(() => {}), [])
   useEffect(() => { void load() }, [load])
+  useInstallWatch(updates, load)
   return { updates, reload: load }
+}
+
+/* When this browser last started an install. Kept for the tab rather than the
+   component, so going from the Dashboard to Settings, or reloading, still
+   shows the install under way. Storage can be refused; the install is then
+   known only from eero's own `last_update_started`. */
+const STARTED_KEY = 'eeronaut.firmware-started'
+function startedHere(): number {
+  try { return Number(sessionStorage.getItem(STARTED_KEY)) || 0 } catch { return 0 }
+}
+function markStarted() {
+  try { sessionStorage.setItem(STARTED_KEY, String(Date.now())) } catch { /* see above */ }
+}
+
+/* How long after a start the button keeps saying so. An install is usually
+   over in ten to twenty minutes; past this, an update eero still offers is
+   taken to be one that never began, and the button is offered again rather
+   than reading "Updating…" for good. */
+const INSTALL_MS = 30 * 60_000
+
+/** Whether an install has been started and the update is still pending. */
+export function installing(u: Updates | null): boolean {
+  if (!u?.has_update) return false
+  const since = Math.max(startedHere(), Date.parse(u.last_update_started ?? '') || 0)
+  return Date.now() - since < INSTALL_MS
+}
+
+/**
+ * Re-read the update state while an install runs, so the notice goes when
+ * the update is done rather than when somebody reloads the page.
+ *
+ * Every 20 seconds, and from the network, never the read cache: a poll the
+ * cache answers is a poll that sees nothing change. Reads fail while the
+ * eeros restart, and the caller keeps its last answer through them.
+ */
+export function useInstallWatch(updates: Updates | null, reload: () => unknown) {
+  const on = installing(updates)
+  useEffect(() => {
+    if (!on) return
+    const id = window.setInterval(() => { freshReads(reload) }, 20_000)
+    return () => window.clearInterval(id)
+  }, [on, reload])
 }
 
 /**
@@ -59,13 +105,18 @@ export function UpdateNowButton({ updates, onDone, tone = 'accent' }: {
 }) {
   const [busy, setBusy] = useState(false)
   if (!updates?.has_update) return null
-  const blocked = updates.can_update_now === false
+  /* Once started, the button says so until the update is no longer pending,
+     dimmed so it cannot be pressed twice. It used to go back to "Update now"
+     the moment eero accepted the request, disabled and with nothing to say
+     why, while every eero restarted. */
+  const running = installing(updates)
+  const blocked = updates.can_update_now === false && !running
 
   return (
     <SubmitButton
       type="button"
       tone={tone}
-      disabled={busy || blocked}
+      disabled={busy || blocked || running}
       title={blocked ? t('firmware.eero_will_not_start_one_now') : undefined}
       onClick={async () => {
         if (!window.confirm(t('firmware.install_now_confirm',
@@ -73,6 +124,7 @@ export function UpdateNowButton({ updates, onDone, tone = 'accent' }: {
         setBusy(true)
         try {
           await api.post('/api/network/updates/start', {})
+          markStarted()
           onDone?.(t('firmware.update_started'), true)
         } catch (e) {
           onDone?.(e instanceof ApiError ? e.message
@@ -82,7 +134,7 @@ export function UpdateNowButton({ updates, onDone, tone = 'accent' }: {
         }
       }}
     >
-      {busy ? t('firmware.starting') : t('firmware.update_now')}
+      {busy ? t('firmware.starting') : running ? t('firmware.updating') : t('firmware.update_now')}
     </SubmitButton>
   )
 }

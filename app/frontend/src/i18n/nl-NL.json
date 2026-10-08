@@ -500,6 +500,7 @@
   "firmware.update_available": "Er is een firmware-update beschikbaar.",
   "firmware.update_now": "Nu bijwerken",
   "firmware.update_started": "Update gestart. Alle eero's herstarten; het netwerk is binnen een paar minuten terug.",
+  "firmware.updating": "Bijwerken…",
   "firmware.version_available": "Firmware {version} is beschikbaar.",
   "firmware.your_update_window": "je updatevenster",
   "inbound_access.443_3000_3002": "443, of 3000-3002",

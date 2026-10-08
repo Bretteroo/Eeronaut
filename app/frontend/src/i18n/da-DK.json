@@ -500,6 +500,7 @@
   "firmware.update_available": "En firmwareopdatering er tilgængelig.",
   "firmware.update_now": "Opdater nu",
   "firmware.update_started": "Opdateringen er startet. Alle eeros genstarter; netværket er tilbage om få minutter.",
+  "firmware.updating": "Opdaterer…",
   "firmware.version_available": "Firmware {version} er tilgængelig.",
   "firmware.your_update_window": "dit opdateringsvindue",
   "inbound_access.443_3000_3002": "443 eller 3000-3002",

@@ -500,6 +500,7 @@
   "firmware.update_available": "Ein Firmware-Update ist verfügbar.",
   "firmware.update_now": "Jetzt aktualisieren",
   "firmware.update_started": "Update gestartet. Alle eeros starten neu. Das Netzwerk ist in wenigen Minuten wieder da.",
+  "firmware.updating": "Wird aktualisiert…",
   "firmware.version_available": "Firmware {version} ist verfügbar.",
   "firmware.your_update_window": "Ihrem Update-Zeitfenster",
   "inbound_access.443_3000_3002": "443 oder 3000-3002",

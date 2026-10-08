@@ -500,6 +500,7 @@
   "firmware.update_available": "ファームウェアのアップデートがあります。",
   "firmware.update_now": "今すぐ更新",
   "firmware.update_started": "更新を開始しました。すべてのeeroが再起動し、数分でネットワークが復旧します。",
+  "firmware.updating": "更新中…",
   "firmware.version_available": "ファームウェア{version}が利用可能です。",
   "firmware.your_update_window": "設定した更新時間帯",
   "inbound_access.443_3000_3002": "443、または3000-3002",

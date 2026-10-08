@@ -5,7 +5,7 @@ import { usePremiumActive, PlusStatus, PlusTick, useCapability } from '../lib/ca
 import { useClock } from '../lib/clock'
 import { copyText } from '../lib/clipboard'
 import { t, tOr, LANGUAGES } from '../i18n'
-import { UpdateNowButton, type Updates } from '../components/FirmwareUpdate'
+import { UpdateNowButton, useInstallWatch, type Updates } from '../components/FirmwareUpdate'
 import { ThemePicker } from '../components/ThemePicker'
 import { AppUpdateNotice } from '../components/AppUpdate'
 import { useOpenAbout } from '../lib/about'
@@ -216,6 +216,8 @@ export function Settings({ prefs: appPrefs, onPrefs }:
   const reloadUpdates = useCallback(() =>
     api.get<Updates>('/api/network/updates')
       .then(setUpdates).catch(() => {}), [])
+  // And while an install runs, so the row stops offering it when it is done.
+  useInstallWatch(updates, reloadUpdates)
 
   /* The page's opening reads, once. `onPrefs` comes from the parent and the
      two loaders are rebuilt per render, so listing them would refetch

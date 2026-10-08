@@ -522,6 +522,7 @@
   "firmware.update_available": "Je k dispozici aktualizace firmwaru.",
   "firmware.update_now": "Aktualizovat nyní",
   "firmware.update_started": "Aktualizace byla spuštěna. Všechna zařízení eero se restartují; síť bude za pár minut opět fungovat.",
+  "firmware.updating": "Aktualizuje se…",
   "firmware.version_available": "Je k dispozici firmware {version}.",
   "firmware.your_update_window": "vašeho okna aktualizací",
   "inbound_access.443_3000_3002": "443 nebo 3000-3002",

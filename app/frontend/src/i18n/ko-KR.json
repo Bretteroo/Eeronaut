@@ -500,6 +500,7 @@
   "firmware.update_available": "펌웨어 업데이트가 있습니다.",
   "firmware.update_now": "지금 업데이트",
   "firmware.update_started": "업데이트를 시작했습니다. 모든 eero가 재시작되며, 몇 분 후 네트워크가 복구됩니다.",
+  "firmware.updating": "업데이트 중…",
   "firmware.version_available": "펌웨어 {version}을(를) 사용할 수 있습니다.",
   "firmware.your_update_window": "업데이트 시간대",
   "inbound_access.443_3000_3002": "443 또는 3000-3002",

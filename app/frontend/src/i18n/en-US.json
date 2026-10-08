@@ -471,6 +471,7 @@
   "firmware.update_available": "A firmware update is available.",
   "firmware.update_now": "Update now",
   "firmware.update_started": "Update started. Every eero restarts; the network comes back in a few minutes.",
+  "firmware.updating": "Updating…",
   "firmware.version_available": "Firmware {version} is available.",
   "firmware.your_update_window": "your update window",
   "inbound_access.443_3000_3002": "443, or 3000-3002",

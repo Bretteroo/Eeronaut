@@ -500,6 +500,7 @@
   "firmware.update_available": "有可用的固件更新。",
   "firmware.update_now": "立即更新",
   "firmware.update_started": "已开始更新。所有 eero 都会重启，网络将在几分钟后恢复。",
+  "firmware.updating": "正在更新…",
   "firmware.version_available": "固件 {version} 现已可用。",
   "firmware.your_update_window": "您设置的更新时段",
   "inbound_access.443_3000_3002": "443，或 3000-3002",

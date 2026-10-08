@@ -500,6 +500,7 @@
   "firmware.update_available": "Há uma atualização de firmware disponível.",
   "firmware.update_now": "Atualizar agora",
   "firmware.update_started": "Atualização iniciada. Todos os eeros reiniciam; a rede volta em alguns minutos.",
+  "firmware.updating": "Atualizando…",
   "firmware.version_available": "O firmware {version} está disponível.",
   "firmware.your_update_window": "sua janela de atualização",
   "inbound_access.443_3000_3002": "443, ou 3000-3002",
