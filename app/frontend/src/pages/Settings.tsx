@@ -181,30 +181,20 @@ export function Settings({ prefs: appPrefs, onPrefs }:
   }, [])
 
   /* An expired invite is a link that no longer does anything, so it is not
-     listed. eero keeps it until somebody withdraws it, and only the owner
-     can, so for an owner it is withdrawn here as well; otherwise it comes
-     back on every visit. Each is tried once per visit, and a refusal is left
-     alone: the row is already gone from the page either way.
+     listed. It is not withdrawn either: eero keeps listing it and answers a
+     withdrawal with 404, so trying sent a failing write on every visit, and
+     every write empties the read cache the other pages open on.
 
      eero says `expired` when it lists one, but an invite can also run out
      while the page is open. `now` moves on when the soonest one does, so
      the list and the fresh link both drop it on time. */
   const [now, setNow] = useState(() => Date.now())
-  const withdrawn = useRef(new Set<string>())
   const expired = (i: Invite, at: number) => i.status === 'expired'
     || (!!i.expires_at && Date.parse(i.expires_at) <= at)
   const liveInvites = invites.filter((i) => !expired(i, now))
   useEffect(() => {
     const at = Date.now()
     if (fresh && expired(fresh, at)) setFresh(null)
-    if (isOwner) {
-      for (const inv of invites) {
-        if (!inv.id || !expired(inv, at) || withdrawn.current.has(inv.id)) continue
-        withdrawn.current.add(inv.id)
-        api.del(`/api/network/admins/invites/${encodeURIComponent(inv.id)}`)
-          .catch(() => {})
-      }
-    }
     const next = [...invites, ...(fresh ? [fresh] : [])]
       .filter((i) => !expired(i, at) && i.expires_at)
       .map((i) => Date.parse(i.expires_at!) - at)
@@ -213,7 +203,7 @@ export function Settings({ prefs: appPrefs, onPrefs }:
     const id = window.setTimeout(() => setNow(Date.now()),
                                  Math.min(Math.min(...next) + 1000, 2 ** 31 - 1))
     return () => window.clearTimeout(id)
-  }, [invites, fresh, isOwner, now])   // eslint-disable-line react-hooks/exhaustive-deps
+  }, [invites, fresh, now])   // eslint-disable-line react-hooks/exhaustive-deps
   /* Opens on the last answer. Until it has one this select is disabled, and
      a disabled control is drawn at half strength — so on every load the
      update window was a faint row that read as broken rather than as
