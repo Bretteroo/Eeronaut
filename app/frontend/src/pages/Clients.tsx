@@ -30,7 +30,11 @@ export function Clients() {
   /* Opens on the last answer; the read below asks for a new one. */
   const [rows, setRows] = useState<Device[]>(
     () => lastRead<Device[]>('/api/devices') ?? [])
-  const [loaded, setLoaded] = useState(false)
+  /* Loaded from the start when there is a last answer to open on. Starting
+     false drew the table's placeholder over rows already in hand, every time
+     somebody came back to this page. */
+  const [loaded, setLoaded] = useState(
+    () => lastRead<Device[]>('/api/devices') !== undefined)
   const [blocked, setBlocked] = useState<Device[]>(
     () => lastRead<Device[]>('/api/devices/blocked') ?? [])
   const [reserved, setReserved] = useState<{ mac?: string }[]>([])
