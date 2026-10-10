@@ -110,7 +110,7 @@ async def lifespan(_: FastAPI):
 # No generated API docs: /docs, /redoc and /openapi.json sit outside /api/,
 # where the interface password does not reach, and they describe every
 # endpoint to anyone who can reach the port.
-app = FastAPI(title="Eeronaut", version="1.0.0",
+app = FastAPI(title="Eeronaut", version="1.0.1",
               description="A web interface for eero mesh networks.",
               lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 
