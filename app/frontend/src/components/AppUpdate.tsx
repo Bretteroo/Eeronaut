@@ -22,8 +22,8 @@ export function useAppUpdate(): AppUpdate | null {
   return u
 }
 
-/** One line saying a new version is out, linking to its notes. Nothing at
- *  all when there is none. */
+/** One line saying a new version is out, linking to the release notes.
+ *  Nothing at all when there is none. */
 export function AppUpdateNotice({ className = '' }: { className?: string }) {
   const u = useAppUpdate()
   if (!u?.available || !u.latest) return null

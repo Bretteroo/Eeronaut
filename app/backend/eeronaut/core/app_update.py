@@ -24,6 +24,9 @@ log = logging.getLogger("eeronaut.update")
 
 REPOSITORY = "Bretteroo/Eeronaut"
 _LATEST = f"https://api.github.com/repos/{REPOSITORY}/releases/latest"
+# Where "What's new?" goes: every release's notes, not only the newest, so
+# somebody a few versions behind reads all they have missed.
+_RELEASES = f"https://github.com/{REPOSITORY}/releases"
 _INTERVAL = 24 * 3600
 _FIRST = 90
 
@@ -55,7 +58,7 @@ async def check_once() -> None:
     tag = str(data.get("tag_name") or "").lstrip("vV")
     if tag and not data.get("draft") and not data.get("prerelease"):
         _state["latest"] = tag
-        _state["url"] = data.get("html_url")
+        _state["url"] = _RELEASES
 
 
 async def _loop() -> None:
