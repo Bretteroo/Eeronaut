@@ -32,6 +32,7 @@ app/frontend/playwright-report/
 *.jsonl
 .salt
 data/
+eeronaut-data/
 .localdata/
 # The test suites moved out of this repository on 2026-09-19, to the sibling
 # directory ../eero-dev. These entries are what they leave behind if somebody

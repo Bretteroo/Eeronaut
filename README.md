@@ -227,7 +227,6 @@ Images are provided for `linux/amd64` and `linux/arm64`.  Eeronaut is lightweigh
   
   * Install Docker.
   * Download [`docker-compose.yml`](docker-compose.yml) into a folder of its own.
-  * Edit it, replacing `</path/to/data>` with the directory you'd like to hold Eeronaut's data.<br />`/home/<username>/.config/eeronaut` is recommended, but you do you, Boo.
   * Then, from the folder holding `docker-compose.yml`:
 
 ```
