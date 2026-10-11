@@ -8,11 +8,9 @@ services:
       # The port Eeronaut listens on. With host networking this is the port
       # on this machine itself, so pick one nothing else is using.
       EERONAUT_PORT: "3340"
-
       # Optional. Sets the Eeronaut password here instead of choosing one on
       # the first visit, and takes priority over any password chosen there.
       # While it is set, the password can only be changed by changing it here.
       # EERONAUT_UI_PASSWORD: "<a password of 8 characters or more>"
-
     volumes:
       - ./eeronaut-data:/data
