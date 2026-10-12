@@ -335,9 +335,11 @@ main section { padding: 88px 0; }
 .mode button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(15, 26, 46, 0.18); }
 .mode button:focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 2px; }
 
-.theme-panel { max-width: 900px; margin: 0 auto; }
+.theme-panel { max-width: 1160px; margin: 0 auto; }
+/* Five pages of the theme fanned out, on a see-through ground. */
+.spread { margin: 0; position: relative; }
+.spread img { width: 100%; height: auto; }
 /* Changing theme or appearance fades the new picture in over the old one. */
-.theme-panel .frame { position: relative; }
 .theme-panel .incoming {
   position: absolute;
   inset: 0;

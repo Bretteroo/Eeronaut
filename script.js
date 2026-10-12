@@ -1,23 +1,23 @@
 // Theme tabs: swap the screenshot and its description.
 const THEMES = {
   harbor: {
-    alt: 'The dashboard in the Harbor theme',
+    name: 'Harbor', pages: 'Dashboard in front, with Clients, Airtime, Security, and Topology behind it',
     desc: 'The original Eeronaut theme: a dark rail, white cards, and a clear blue for anything you can press.',
   },
   eerish: {
-    alt: 'The dashboard in the Eerish theme',
-    desc: 'White space, large type, photography, and eero’s blue, with the navigation across the top.',
+    name: 'Eerish', pages: 'Dashboard in front, with Clients, Airtime, Security, and Topology behind it',
+    desc: 'White space, large type, photography, and eero\u2019s blue, with the navigation across the top.',
   },
   'liquid-glass': {
-    alt: 'The dashboard in the Liquid Glass theme',
+    name: 'Liquid Glass', pages: 'Dashboard in front, with Clients, Airtime, Security, and Topology behind it',
     desc: 'Frosted, translucent panels over a soft gradient, with the navigation floating along the bottom.',
   },
   sailing: {
-    alt: 'The dashboard in the Sailing theme',
+    name: 'Sailing', pages: 'Dashboard in front, with Clients, Airtime, Security, and Topology behind it',
     desc: 'White decks and brass over photographs of deep water.',
   },
   winksys: {
-    alt: 'The router status page in the Winksys theme',
+    name: 'Winksys', pages: 'router status in front, with Local Network, Wireless, Firewall, and Basic Setup behind it',
     desc: 'A tribute to the router pages of the early 2000s, indigo bars and all. Included for laughs, not recommended.',
   },
 }
@@ -34,9 +34,9 @@ const still = window.matchMedia('(prefers-reduced-motion: reduce)')
 let showing = 0
 
 function show() {
-  const base = `assets/shots/${theme}-home${mode === 'dark' ? '-dark' : ''}`
-  const srcset = `${base}-800.webp 800w, ${base}.webp 1600w`
-  const alt = `${THEMES[theme].alt}, ${mode}`
+  const base = `assets/shots/spread-${theme}-${mode}`
+  const srcset = `${base}-1600.webp 1600w, ${base}.webp 3200w`
+  const alt = `The ${THEMES[theme].name} theme, ${mode}: the ${THEMES[theme].pages}`
   const turn = ++showing
 
   desc.classList.add('fading')
