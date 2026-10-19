@@ -568,8 +568,60 @@ async def scan_full(serial: str | None = None, seconds: int = 5) -> Json:
 
 @router.get("/backup-aps", dependencies=[Depends(require_session)])
 async def get_backup_aps(serial: str | None = None) -> Json:
-    n, r = await _on_node(serial, "backup_aps")
+    """The saved backup networks: the eero's own list, else eero's cloud copy.
+
+    The eero's is the one to read during an outage, which is when the list
+    matters. But firmware v7.18.0 stopped serving it locally: the node's proxy
+    answers HTTP 502 for the whole BackupAp service, after longer than the
+    local deadline, so every eero times out. The cloud has the same list, and
+    is what adding, editing, and reordering already go through. It is asked
+    alongside rather than after, or the card waits out every eero's deadline
+    and then the cloud's answer too.
+    """
+    if serial:
+        n, r = await _on_node(serial, "backup_aps")
+        return {"source_serial": n.serial, **r}
+    cloud = asyncio.create_task(_cloud_backup_aps())
+    try:
+        n, r = await _on_node(None, "backup_aps")
+    except (HTTPException, LocalUnavailable) as exc:
+        if getattr(exc, "status_code", 503) != http_status.HTTP_503_SERVICE_UNAVAILABLE:
+            raise
+        answer = await cloud
+        if answer is None:
+            raise
+        return answer
+    finally:
+        cloud.cancel()
     return {"source_serial": n.serial, **r}
+
+
+async def _cloud_backup_aps() -> Json | None:
+    s = session_store.session
+    if not s or not s.network_url or not store.token:
+        return None
+    client = EeroCloud(token=store.token, auto_refresh=True)
+    try:
+        entries = await client.get(f"{s.network_url}/backup_access_points") or []
+    except Exception as exc:
+        log.info("backup networks: the cloud list did not load either: %s", exc)
+        return None
+    finally:
+        await client.aclose()
+    return {
+        "source_serial": None,
+        # The switch the card shows comes from backupinternet, not from here.
+        "enabled": None,
+        "last_updated_at": None,
+        # As the local list does, never the passwords themselves. eero's list
+        # is not known to carry them, and without one this reads as "Set
+        # password", which is still what the button does.
+        "credentials": [{"id": e.get("uuid"), "ssid": e.get("ssid"),
+                         "enabled": e.get("enabled") is not False,
+                         "has_password": bool(e.get("password")),
+                         "created": e.get("created")}
+                        for e in entries if isinstance(e, dict) and e.get("uuid")],
+    }
 
 
 class BackupApToggle(BaseModel):

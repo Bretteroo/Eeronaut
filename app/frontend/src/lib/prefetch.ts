@@ -19,8 +19,7 @@ const FIRST: Record<string, string[]> = {
         '/api/insights/speedtests?limit=10', '/api/network/plan'],
   '/clients': ['/api/devices', '/api/profiles'],
   '/profiles': ['/api/profiles', '/api/devices'],
-  '/topology': ['/api/eeros', '/api/eeros/radios', '/api/local/status',
-                '/api/local/topology/detail'],
+  '/topology': ['/api/eeros', '/api/eeros/radios', '/api/local/status'],
   '/airtime': ['/api/devices', '/api/network/capabilities'],
   /* The two heaviest first paints in the app, and the two that were worst to
      arrive on: Internet draws the connection, DNS, backup, Thread, and power
