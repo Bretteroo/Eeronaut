@@ -8,7 +8,7 @@ from fastapi import (APIRouter, Depends, HTTPException, Request, Response,
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 
-from ..core import appauth, themes
+from ..core import appauth, ingress, themes
 from ..core.prefs import Prefs
 
 router = APIRouter(prefix="/api/app", tags=["app access"])
@@ -28,6 +28,9 @@ class AccessState(BaseModel):
     # account one: which stylesheet a page loads says nothing about the
     # network behind the password.
     theme: str = themes.DEFAULT
+    # Running as the Home Assistant app, where the password is chosen from
+    # Home Assistant's sidebar rather than by whoever reaches the port first.
+    home_assistant: bool = False
 
 
 def _client(request: Request) -> str:
@@ -41,7 +44,7 @@ def require_app_session(request: Request) -> None:
     validates the body first otherwise, so a signed-out caller posting nothing
     got 422 instead of 401 and the route read as ungated.
     """
-    if not appauth.valid_session(request.cookies.get(appauth.COOKIE_NAME)):
+    if not appauth.signed_in(request):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "sign in first")
 
 
@@ -49,9 +52,10 @@ def require_app_session(request: Request) -> None:
 async def state(request: Request) -> AccessState:
     return AccessState(
         configured=appauth.is_configured(),
-        signed_in=appauth.valid_session(request.cookies.get(appauth.COOKIE_NAME)),
+        signed_in=appauth.signed_in(request),
         locked_for=appauth.lockout_remaining(_client(request)),
         theme=themes.active_id(Prefs.load().theme),
+        home_assistant=ingress.enabled(),
     )
 
 
@@ -83,11 +87,21 @@ async def setup(body: PasswordBody, request: Request, response: Response) -> Acc
     which used to leave the eero session in place: whoever on the network set a
     password first, before the owner got back to the page, inherited a signed-in
     eero account. On a fresh install there is no session to clear.
+
+    In Home Assistant the password is for browsers outside it, and only Home
+    Assistant's sidebar may choose it: the eero sign-in there belongs to
+    whoever Home Assistant signed in, so it stays, and nobody else on the
+    network gets to set a password first.
     """
+    through_ha = bool(ingress.prefix(request))
     async with _setup_lock:
         if appauth.is_configured():
             raise HTTPException(status.HTTP_409_CONFLICT,
                                 "a password is already set for this interface")
+        if ingress.enabled() and not through_ha:
+            raise HTTPException(status.HTTP_403_FORBIDDEN,
+                                "choose Eeronaut's password in Home Assistant first: "
+                                "open Eeronaut from Home Assistant's sidebar and go to Settings")
         # The password first, so one that is refused changes nothing: it used
         # to clear the eero sign-in and then fail the length rule.
         try:
@@ -97,8 +111,9 @@ async def setup(body: PasswordBody, request: Request, response: Response) -> Acc
         # Whether or not a session loaded. `store.session` is None when its
         # file could not be read just now, and keying on it left that file
         # behind for a later read to bring back.
-        from ..core.session import store
-        store.clear()
+        if not through_ha:
+            from ..core.session import store
+            store.clear()
         try:
             await run_in_threadpool(appauth.set_password, body.password)
         except ValueError as exc:
@@ -109,7 +124,7 @@ async def setup(body: PasswordBody, request: Request, response: Response) -> Acc
             raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 appauth.unwritable_message()) from exc
     _set_cookie(response, request)
-    return AccessState(configured=True, signed_in=True)
+    return AccessState(configured=True, signed_in=True, home_assistant=ingress.enabled())
 
 
 @router.post("/login", response_model=AccessState)
@@ -131,7 +146,8 @@ async def login(body: PasswordBody, request: Request, response: Response) -> Acc
 
 
 class ChangePasswordBody(BaseModel):
-    current: str = Field(..., min_length=1, max_length=256)
+    # Not asked for in Home Assistant's sidebar (see below).
+    current: str = Field("", max_length=256)
     new: str = Field(..., min_length=1, max_length=256)
 
 
@@ -145,6 +161,10 @@ async def change_password(body: ChangePasswordBody, request: Request,
     session cookie proves someone had the password once, not that the person
     holding the keyboard now knows it. Rate-limited on the same counter as
     sign-in, so this cannot become a quieter way to guess it.
+
+    Home Assistant's sidebar is the exception. Home Assistant has just signed
+    its administrator in, which is all the current password would prove, and
+    it is where somebody who has forgotten the password goes to set a new one.
     """
     if appauth.env_password_in_use():
         raise HTTPException(
@@ -154,17 +174,18 @@ async def change_password(body: ChangePasswordBody, request: Request,
             "Change it where that variable is set, or unset it and restart.")
 
     client = _client(request)
-    wait = appauth.lockout_remaining(client)
+    through_ha = bool(ingress.prefix(request))
+    wait = 0 if through_ha else appauth.lockout_remaining(client)
     if wait:
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS,
                             f"too many attempts, try again in {wait} seconds")
-    if not await run_in_threadpool(appauth.verify_password, body.current):
+    if not through_ha and not await run_in_threadpool(appauth.verify_password, body.current):
         wait = appauth.record_failure(client)
         detail = "that is not the current password"
         if wait:
             detail += f"; further attempts blocked for {wait} seconds"
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail)
-    if body.new == body.current:
+    if not through_ha and body.new == body.current:
         raise HTTPException(status.HTTP_400_BAD_REQUEST,
                             "the new password is the same as the current one")
     try:
@@ -175,7 +196,7 @@ async def change_password(body: ChangePasswordBody, request: Request,
     # Every other session is now invalid, including any this browser holds in
     # another tab, so this one is re-issued rather than left to expire.
     _set_cookie(response, request)
-    return AccessState(configured=True, signed_in=True)
+    return AccessState(configured=True, signed_in=True, home_assistant=ingress.enabled())
 
 
 @router.post("/logout", response_model=AccessState)

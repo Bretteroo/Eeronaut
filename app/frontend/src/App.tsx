@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { api, ApiError, freshReads, type AuthState, type Capability, type Prefs } from './lib/api'
+import { BASE } from './lib/base'
 import { CapabilityProvider } from './lib/capabilities'
 import { Shell } from './components/Shell'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -262,7 +263,8 @@ export default function App() {
     <CapabilityProvider value={{ caps, capsReady, prefs, cloudOk: cloud,
                               premiumActive: net?.premium_status === 'active' }}>
       <ErrorBoundary onReset={() => void loadSession()}>
-      <BrowserRouter>
+      {/* Inside Home Assistant, the page lives under its ingress path. */}
+      <BrowserRouter basename={BASE || undefined}>
         {/* Inside the router: an alert can carry a link. */}
         <AlertHost />
         <AppUpdateAlert />

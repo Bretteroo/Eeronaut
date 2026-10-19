@@ -213,6 +213,8 @@ Eeronaut is also not a way to get eero Plus features for free. Eero Plus feature
 
 Docker is the recommended way to run Eeronaut: one command to install, one to update, and nothing else to set up on the machine.
 
+If you run Home Assistant, Eeronaut can also be installed as a Home Assistant app.
+
 Images are provided for `linux/amd64` and `linux/arm64`.  Eeronaut is lightweight enough for Raspberry Pi.
 
 > [!IMPORTANT]
@@ -243,6 +245,24 @@ From the same folder:
 ```
 docker compose pull && docker compose up -d
 ```
+</details>
+
+<details>
+<summary><b>Install in Home Assistant</b></summary>
+
+You'll need Home Assistant OS or a Supervised install. Container and Core installs can't run apps, so use Docker there instead.
+
+### Install Eeronaut
+* In Home Assistant, go to **Settings > Apps** and choose **Install App**.
+* Open the ⋮ menu at the top right, choose **Repositories**, and add `https://github.com/Bretteroo/Eeronaut`.
+* Find **Eeronaut** in the store, then install and start it.
+* Turn on **Show in sidebar**.
+
+Eeronaut then appears in Home Assistant's sidebar for Home Assistant's administrators. Phones and other computers can also open it directly at <http://homeassistant.local:3340>, with a password you choose in Eeronaut's **Settings** from the sidebar.
+
+### Future Updates
+
+Home Assistant offers each new Eeronaut release as an app update, alongside its own updates.
 </details>
 
 <details>

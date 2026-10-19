@@ -62,5 +62,9 @@ export default defineConfig({
     port: 5173,
     proxy: { '/api': { target: 'http://127.0.0.1:8099', changeOrigin: true } },
   },
+  // Relative, so the page loads its bundle wherever it is served from: at /
+  // on its own, or under Home Assistant's ingress path. The server makes the
+  // index's own links absolute (core/ingress.py), for pages below the top.
+  base: './',
   build: { outDir: '../backend/eeronaut/static', emptyOutDir: true },
 })

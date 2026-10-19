@@ -17,7 +17,7 @@ from .api import extras, network, nodedetail, nodes, security
 from .api import settings as settings_api
 from .api import themes as themes_api
 from .core.themes import ENGINE_VERSION as THEME_ENGINE
-from .core import appauth, burst, datadir
+from .core import appauth, burst, datadir, ingress
 from .core.config import app_version, settings
 from .core.errors import (CloudUnreachable, LocalUnavailable, NotAuthenticated,
                           UpstreamError)
@@ -152,7 +152,7 @@ async def require_interface_session(request: Request, call_next):
         # Closed both before and after setup. First-run setup only needs the
         # /api/app endpoints, so leaving the rest open until a password exists
         # would expose an unattended deployment that never finished setup.
-        if not appauth.valid_session(request.cookies.get(appauth.COOKIE_NAME)):
+        if not appauth.signed_in(request):
             detail = ("interface sign-in required" if appauth.is_configured()
                       else "set an interface password first")
             return JSONResponse(status_code=401, content={"detail": detail})
@@ -175,12 +175,16 @@ async def require_interface_session(request: Request, call_next):
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
        "img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; "
        "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'")
+# Home Assistant shows its sidebar's page in a frame of its own, from its own
+# address, which through ingress is this page's address too.
+CSP_INGRESS = CSP.replace("frame-ancestors 'none'", "frame-ancestors 'self'")
 
 
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
-    response.headers.setdefault("Content-Security-Policy", CSP)
+    response.headers.setdefault("Content-Security-Policy",
+                                CSP_INGRESS if ingress.prefix(request) else CSP)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("Referrer-Policy", "same-origin")
     return response
@@ -258,7 +262,7 @@ if STATIC.is_dir():
     app.mount("/assets", StaticFiles(directory=STATIC / "assets"), name="assets")
 
     @app.get("/{path:path}")
-    async def spa(path: str) -> Response:
+    async def spa(path: str, request: Request) -> Response:
         # An unmatched /api path is a mistake, not a deep link. This route is
         # the last one registered, so it used to answer a removed or mistyped
         # endpoint with the HTML shell and a 200 — which reads as success to
@@ -273,6 +277,9 @@ if STATIC.is_dir():
         # anyone who could reach the port and without a session.
         root = STATIC.resolve()
         candidate = (STATIC / path).resolve()
-        if path and candidate.is_relative_to(root) and candidate.is_file():
+        if path and candidate.is_relative_to(root) and candidate.is_file() \
+                and candidate.name != "index.html":
             return FileResponse(candidate)
-        return FileResponse(STATIC / "index.html")
+        # Inside Home Assistant the page is told the path it lives under.
+        body = ingress.tag_page((STATIC / "index.html").read_bytes(), ingress.prefix(request))
+        return Response(body, media_type="text/html", headers={"cache-control": "no-cache"})

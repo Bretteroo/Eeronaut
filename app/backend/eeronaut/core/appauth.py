@@ -174,6 +174,14 @@ def issue_session() -> str:
                                 "pv": password_version()})
 
 
+def signed_in(request) -> bool:
+    """Whether this request may use the interface: it carries a session, or it
+    came through Home Assistant's sidebar, where Home Assistant has already
+    signed its administrator in (core/ingress.py)."""
+    from . import ingress
+    return bool(ingress.prefix(request)) or valid_session(request.cookies.get(COOKIE_NAME))
+
+
 def valid_session(token: str | None) -> bool:
     if not token:
         return False

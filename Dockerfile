@@ -51,15 +51,28 @@ WORKDIR /app
 VOLUME ["/data"]
 EXPOSE 3340
 
+# In Home Assistant the port comes from the app's options, which only
+# Eeronaut's own code reads, so the check is a module rather than a line here.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD python -c "import os,urllib.request,sys; \
-sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.environ.get('EERONAUT_PORT','3340')+'/api/health',timeout=4).status==200 else 1)"
+  CMD ["python", "-m", "eeronaut.healthcheck"]
 
-# Shell form so EERONAUT_PORT is honored. With host networking there is no port
-# mapping to fall back on, so the listening port has to be settable here.
-#
-# No proxy headers. With `--forwarded-allow-ips '*'` uvicorn believed the
-# `X-Forwarded-For` of whoever connected, so the address the sign-in lockout
-# counts against was one the attacker chose: a different one per request and
-# the lockout never fired. Every address is the connecting one.
-CMD exec uvicorn eeronaut.main:app --host 0.0.0.0 --port "${EERONAUT_PORT:-3340}"
+# The port is EERONAUT_PORT, read by Eeronaut itself. With host networking
+# there is no port mapping to fall back on, so the listening port has to be
+# settable, and it is, through the environment.
+CMD ["python", "-m", "eeronaut"]
+
+# ---- Home Assistant -------------------------------------------------------
+# The same image runs as a Home Assistant app (homeassistant/eeronaut/),
+# whose Supervisor reads these labels. Home Assistant calls arm64 aarch64, so
+# each platform's image takes its own name from a stage of its own
+# (TARGETARCH is BuildKit's; declaring it would blank it).
+FROM runtime AS runtime-amd64
+LABEL io.hass.arch="amd64"
+FROM runtime AS runtime-arm64
+LABEL io.hass.arch="aarch64"
+
+FROM runtime-${TARGETARCH}
+ARG EERONAUT_VERSION=dev
+LABEL io.hass.type="app" \
+      io.hass.name="Eeronaut" \
+      io.hass.version="${EERONAUT_VERSION}"

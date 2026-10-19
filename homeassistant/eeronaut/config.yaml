@@ -1,0 +1,37 @@
+# The Home Assistant app. It runs the same image as docker-compose.yml, so
+# `version` must name a published tag of ghcr.io/bretteroo/eeronaut and moves
+# with every release.
+name: Eeronaut
+version: "1.0.2"
+slug: eeronaut
+description: A web dashboard for managing eero mesh networks.
+url: https://github.com/Bretteroo/Eeronaut
+arch:
+  - amd64
+  - aarch64
+image: ghcr.io/bretteroo/eeronaut
+startup: application
+boot: auto
+# Eeronaut looks for the eeros on the home network by mDNS, and talks to them
+# directly, so it has to be on that network itself.
+host_network: true
+# The page in Home Assistant's sidebar. Its port is the Supervisor's choice (0),
+# so moving the web port below cannot break it; Eeronaut asks the Supervisor
+# for it (core/haoptions.py), which is what hassio_api is for.
+ingress: true
+ingress_port: 0
+hassio_api: true
+panel_icon: mdi:router-wireless
+panel_title: Eeronaut
+# Administrators only. The page can reboot the network and show the Wi-Fi
+# password, and Home Assistant's sign-in is the only one it asks for there.
+panel_admin: true
+environment:
+  # Lets Eeronaut trust the headers Home Assistant's proxy sends (core/ingress.py).
+  EERONAUT_HA_INGRESS: "1"
+# The port Eeronaut answers on, on the Configuration tab. The app uses the
+# host's network, so it has to be free on the Home Assistant machine.
+options:
+  web_port: 3340
+schema:
+  web_port: port

@@ -1,4 +1,5 @@
 import { api, seed } from './api'
+import { withBase } from './base'
 import { preloadPage } from './pages'
 
 /* What each page asks for first.
@@ -103,7 +104,7 @@ export function warmAll() {
      not in it: they are already looking at it, and whatever it needed was
      asked for before this ran. */
   const pages = Object.keys(FIRST)
-    .filter((path) => path !== window.location.pathname)
+    .filter((path) => withBase(path) !== window.location.pathname)
   const queue: string[] = []
   for (const path of pages) {
     asked.add(path)

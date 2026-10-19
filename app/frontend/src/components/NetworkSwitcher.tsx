@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { api } from '../lib/api'
+import { withBase } from '../lib/base'
 import { useRevalidate } from '../lib/revalidate'
 import { NETWORKS_MS } from '../lib/pollRates'
 import { t } from '../i18n'
@@ -163,7 +164,7 @@ export function NetworkSwitcher(
          machine is not on that network's segment, and an unknown path goes
          there too. A full reload rather than a client-side navigation, because
          every fetch on the page is scoped to the network that just changed. */
-      window.location.assign(loc.pathname)
+      window.location.assign(withBase(loc.pathname))
     } catch {
       setBusy(false)
     }

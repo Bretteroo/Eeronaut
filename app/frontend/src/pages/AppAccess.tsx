@@ -11,6 +11,9 @@ export interface AccessState {
    *  interface can ask before anyone has signed in, and this screen is
    *  themed too. */
   theme: string
+  /** Running as the Home Assistant app, where the password is chosen from
+   *  Home Assistant's sidebar and nowhere else. */
+  home_assistant?: boolean
 }
 
 /**
@@ -54,6 +57,16 @@ export function AppAccess({ state, onDone }:
                className="h-auto w-full max-w-[19rem]" />
         </div>
 
+        {/* In Home Assistant, whoever reaches this port first does not get
+            to choose the password: Home Assistant's sidebar does. */}
+        {setup && state.home_assistant ? (
+          <div className="card p-5">
+            <h1 className="text-[15px] font-semibold">{t('app_access.choose_password')}</h1>
+            <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--color-ink-3)]">
+              {t('app_access.choose_in_home_assistant')}
+            </p>
+          </div>
+        ) : (
         <form onSubmit={submit} className="card p-5">
           <h1 className="text-[15px] font-semibold">
             {setup ? t('app_access.choose_password') : t('app_access.enter_your_password')}
@@ -98,8 +111,13 @@ export function AppAccess({ state, onDone }:
 
           {/* Only when there is a password to have lost. On first run the form
               above is setting one, and there is nothing to recover from. */}
-          {!setup && <LostPassword />}
+          {!setup && (state.home_assistant
+            ? <p className="mt-3 text-center text-[12px] text-[var(--color-ink-3)]">
+                {t('app_access.lost_home_assistant')}
+              </p>
+            : <LostPassword />)}
         </form>
+        )}
       </div>
     </div>
   )

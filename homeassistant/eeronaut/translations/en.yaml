@@ -1,0 +1,6 @@
+configuration:
+  web_port:
+    name: Web port
+    description: >-
+      Where Eeronaut's page answers on your network, for browsers outside
+      Home Assistant. The sidebar doesn't use it.

@@ -1,0 +1,6 @@
+# Lets Home Assistant install Eeronaut as an app: in Home Assistant, add
+# https://github.com/Bretteroo/Eeronaut as an app repository. The app
+# itself is in homeassistant/eeronaut/.
+name: Eeronaut
+url: https://github.com/Bretteroo/Eeronaut
+maintainer: Bretteroo

@@ -9,6 +9,8 @@ import { UpdateNowButton, useInstallWatch, type Updates } from '../components/Fi
 import { ThemePicker } from '../components/ThemePicker'
 import { AppUpdateNotice } from '../components/AppUpdate'
 import { useOpenAbout } from '../lib/about'
+import { BASE } from '../lib/base'
+import type { AccessState } from './AppAccess'
 
 /** Every zone the browser knows, sorted, computed once.
  *
@@ -115,6 +117,18 @@ export function Settings({ prefs: appPrefs, onPrefs }:
   const [changingPw, setChangingPw] = useState(false)
   const [savingPw, setSavingPw] = useState(false)
   const pwSay = useNotice()
+  /* Opened from Home Assistant's sidebar, which has signed this person in
+     already. The password is then only for browsers outside Home Assistant,
+     there is nothing to sign out of, and the password can be chosen here,
+     where the server lets only the sidebar choose it (api/appauth.py). */
+  const inHa = !!BASE
+  const [pwSet, setPwSet] = useState(true)
+  useEffect(() => {
+    if (!inHa) return
+    api.get<AccessState>('/api/app/state')
+      .then((s) => setPwSet(s.configured)).catch(() => {})
+  }, [inHa])
+  const choosingPw = !pwSet
 
   useEffect(() => {
     api.get<{ cadence?: string }>('/api/insights/report-settings')
@@ -882,7 +896,7 @@ export function Settings({ prefs: appPrefs, onPrefs }:
 
       <Card icon="key" title={t('settings.interface_access')} anchor="access">
         <p className="mb-3 text-[13px] leading-relaxed text-[var(--color-ink-2)]">
-          {t('settings.interface_has_its_own_password')}
+          {inHa ? t('settings.home_assistant_password') : t('settings.interface_has_its_own_password')}
         </p>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={openAbout} className={ACTION}
@@ -894,18 +908,21 @@ export function Settings({ prefs: appPrefs, onPrefs }:
             onClick={() => { setChangingPw((v) => !v); pwSay.clear() }}
             className={ACTION}
           >
-            {changingPw ? t('settings.cancel') : t('settings.change_password')}
+            {changingPw ? t('settings.cancel')
+              : choosingPw ? t('app_access.choose_password') : t('settings.change_password')}
           </button>
-          <button
-            type="button"
-            onClick={async () => {
-              await api.post('/api/app/logout').catch(() => {})
-              window.location.reload()
-            }}
-            className={ACTION}
-          >
-            {t('settings.sign_out_of_interface')}
-          </button>
+          {!inHa && (
+            <button
+              type="button"
+              onClick={async () => {
+                await api.post('/api/app/logout').catch(() => {})
+                window.location.reload()
+              }}
+              className={ACTION}
+            >
+              {t('settings.sign_out_of_interface')}
+            </button>
+          )}
         </div>
 
         {changingPw && (
@@ -920,19 +937,26 @@ export function Settings({ prefs: appPrefs, onPrefs }:
               }
               setSavingPw(true); pwSay.clear()
               try {
-                await api.post('/api/app/password',
-                               { current: String(f.get('current')), new: next })
-                pwSay.ok(t('settings.password_changed_any_other_browser'))
+                if (choosingPw) {
+                  await api.post('/api/app/setup', { password: next })
+                  setPwSet(true)
+                } else {
+                  await api.post('/api/app/password',
+                                 { current: String(f.get('current') ?? ''), new: next })
+                  pwSay.ok(t('settings.password_changed_any_other_browser'))
+                }
                 setChangingPw(false)
               } catch (err) {
                 pwSay.fail(err instanceof ApiError ? err.message : t('settings.did_not_work'))
               } finally { setSavingPw(false) }
             }}
           >
-            <Field label={t('settings.current_password')} htmlFor="pw-current">
-              <input id="pw-current" name="current" type="password" required
-                     autoComplete="current-password" className={FIELD_WIDE} />
-            </Field>
+            {!inHa && (
+              <Field label={t('settings.current_password')} htmlFor="pw-current">
+                <input id="pw-current" name="current" type="password" required
+                       autoComplete="current-password" className={FIELD_WIDE} />
+              </Field>
+            )}
             <Field label={t('settings.new_password')} htmlFor="pw-next">
               <input id="pw-next" name="next" type="password" required minLength={8}
                      autoComplete="new-password" className={FIELD_WIDE} />
@@ -942,7 +966,8 @@ export function Settings({ prefs: appPrefs, onPrefs }:
                      autoComplete="new-password" className={FIELD_WIDE} />
             </Field>
             <SubmitButton disabled={savingPw} className="justify-self-start">
-              {savingPw ? t('settings.changing') : t('settings.change_password')}
+              {savingPw ? t('settings.changing')
+                : choosingPw ? t('app_access.set_password') : t('settings.change_password')}
             </SubmitButton>
             <p className="text-[12px] leading-relaxed text-[var(--color-ink-3)]">
               {t('settings.least_8_characters_there_no')}
