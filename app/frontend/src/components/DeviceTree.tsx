@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { CableDataIcon } from './DeviceIcon'
 import { hasKnownUplink, meshesTo } from '../lib/mesh'
 import { api } from '../lib/api'
-import { Card, Drawer, SignalBars, StatusDot, useFold } from './primitives'
+import { Card, Drawer, EASE_OUT, SignalBars, StatusDot, useFold } from './primitives'
 import { clientBars } from '../lib/signal'
 import { LinkBadge, Stem } from './meshLines'
 import { EeroIcon } from './DeviceIcon'
@@ -287,9 +287,9 @@ export function DeviceTree() {
 
   if (!eeros.length || !tree) return null
 
-  function ClientRow({ d }: { d: Device }) {
+  function clientRow(d: Device) {
     return (
-      <li className="border-b border-[var(--color-line)] last:border-0">
+      <li key={d.url} className="border-b border-[var(--color-line)] last:border-0">
         <button
           type="button"
           onClick={() => setPicked(d)}
@@ -316,7 +316,7 @@ export function DeviceTree() {
     )
   }
 
-  function NodeCard({ n }: { n: Node }) {
+  function nodeCard(n: Node) {
     const open = !collapsed[n.key]
     const e = n.eero
     const state = !e ? 'ok'
@@ -327,6 +327,7 @@ export function DeviceTree() {
       <div className="rounded-lg border border-[var(--color-line)]">
         <button
           type="button"
+          aria-expanded={open}
           onClick={() => setCollapsed((x) => ({ ...x, [n.key]: !x[n.key] }))}
           className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2
                      text-left transition-colors hover:bg-[var(--color-surface-2)]"
@@ -360,19 +361,35 @@ export function DeviceTree() {
           </span>
           <span className="shrink-0 whitespace-nowrap text-[12px] text-[var(--color-ink-3)]">
             {tn('device_tree.clients', count)}
-            <span className="ml-1">{open ? '\u25be' : '\u25b8'}</span>
+            <span aria-hidden className="ml-1 inline-block transition-transform duration-300
+                                         motion-reduce:transition-none"
+                  style={{ transform: open ? 'rotate(90deg)' : 'none',
+                           transitionTimingFunction: EASE_OUT }}>{'\u25b8'}</span>
           </span>
         </button>
-        {open && (
-          <ul className="border-t border-[var(--color-line)] px-3 py-2">
-            {count === 0 && (
-              <li className="py-1 text-[12px] text-[var(--color-ink-3)]">
-                {t('device_tree.nothing_connected_here')}
-              </li>
-            )}
-            {n.clients.map((d) => <ClientRow key={d.url} d={d} />)}
-          </ul>
-        )}
+        {/* Always drawn, and slid open and shut: rows from 0fr to 1fr
+            animates the height without measuring one, the same as a row
+            opening under another in a table. This is why the cards are
+            called as functions rather than drawn as components of their own:
+            a component declared inside this one is a new type on every
+            render, so each click put a fresh card in place of the old one,
+            and a fresh card has nothing to animate from. */}
+        <div className="grid transition-[grid-template-rows,opacity] duration-300
+                        motion-reduce:transition-none"
+             style={{ gridTemplateRows: open ? '1fr' : '0fr', opacity: open ? 1 : 0,
+                      transitionTimingFunction: EASE_OUT }}
+             inert={open ? undefined : true}>
+          <div className="min-h-0 overflow-hidden">
+            <ul className="border-t border-[var(--color-line)] px-3 py-2">
+              {count === 0 && (
+                <li className="py-1 text-[12px] text-[var(--color-ink-3)]">
+                  {t('device_tree.nothing_connected_here')}
+                </li>
+              )}
+              {n.clients.map(clientRow)}
+            </ul>
+          </div>
+        </div>
       </div>
     )
   }
@@ -406,7 +423,7 @@ export function DeviceTree() {
      too, so the picture reads as one live thing. */
   /* The same length as the drop lines below a rail, so a rail sits midway
      between ranks and the line shows above and below a badge. */
-  const Line = () => <Stem dir="v" className="relative h-14 w-[3px]" />
+  const line = <Stem dir="v" className="relative h-14 w-[3px]" />
 
   /** One level and everything beneath it. */
   /* One node and everything under it.
@@ -415,17 +432,17 @@ export function DeviceTree() {
      the first column while the line joining it to its parent runs down the
      middle. Wrapping keeps one child centered under its parent and lets five
      spread across the width. */
-  function Branch({ n }: { n: Node }) {
+  function branch(n: Node) {
     return (
       <div className="flex flex-col items-center">
         {/* Every card is the same fixed width at every depth, so a row of
             children reads as one rank. Letting them grow meant three siblings
             widened until only two fit and the third wrapped onto its own
             line, which looked like a broken level rather than a full one. */}
-        <div className="w-72 shrink-0"><NodeCard n={n} /></div>
+        <div className="w-72 shrink-0">{nodeCard(n)}</div>
         {n.children.length > 0 && (
           <>
-            <Line />
+            {line}
             {/* No wrapping: the rail is drawn across one row, and the card
                 scrolls sideways instead of breaking the row in two. */}
             <div className="flex flex-nowrap items-start justify-center">
@@ -459,7 +476,7 @@ export function DeviceTree() {
                                                              : t('node_panel.wireless_uplink')} />
                       </span>
                     )}
-                    <Branch n={c} />
+                    {branch(c)}
                   </div>
                 )
               })}
@@ -475,10 +492,10 @@ export function DeviceTree() {
      line down the left from each parent, a short one across to each child,
      and the link's badge on that. How far each level
      is indented is `--outline-indent`, for a theme with less room. */
-  function Outline({ n }: { n: Node }) {
+  function outlineOf(n: Node) {
     return (
       <div className="min-w-0">
-        <NodeCard n={n} />
+        {nodeCard(n)}
         {n.children.length > 0 && (
           <ul data-part="map-outline" className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-3 pl-[var(--outline-indent,4rem)]">
             {n.children.map((c, i) => {
@@ -499,7 +516,7 @@ export function DeviceTree() {
                                                            : t('node_panel.wireless_uplink')} />
                     </span>
                   )}
-                  <Outline n={c} />
+                  {outlineOf(c)}
                 </li>
               )
             })}
@@ -542,10 +559,10 @@ export function DeviceTree() {
           </div>
           {/* In the outline the root line runs down the left, under the
               Internet's own mark, rather than down the middle. */}
-          <div className={outline ? 'ml-5' : ''}><Line /></div>
+          <div className={outline ? 'ml-5' : ''}>{line}</div>
           {outline
-            ? <div className="w-full max-w-xl"><Outline n={tree} /></div>
-            : <Branch n={tree} />}
+            ? <div className="w-full max-w-xl">{outlineOf(tree)}</div>
+            : branch(tree)}
         </div>
       </div>
       <Drawer
