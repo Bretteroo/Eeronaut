@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, freshReads, ApiError } from '../lib/api'
-import { Card, SubmitButton, Toggle, type CardSay } from './primitives'
+import { Card, Skeleton, SubmitButton, Toggle, type CardSay } from './primitives'
 import { usePlusGate, useCloud, PlusLock } from '../lib/capabilities'
 import { t, tn } from '../i18n'
 
@@ -40,6 +40,11 @@ export function InternetBackup() {
   const capBackup = usePlusGate('internet_backup')
   const backupNeedsPlus = capBackup.needsPlus
   const [backup, setBackup] = useState<BackupAps | null>(null)
+  /* Whether a read of the list has failed. Until one has, a missing list is
+     one still on its way, and "Not loaded." over it was a failure that had
+     not happened: it showed on every visit for the second or so the read
+     takes, and then the list replaced it. */
+  const [backupFailed, setBackupFailed] = useState(false)
   /* The master switch and the Signal's state, which live on the network rather
      than on the local channel the saved-network list comes from. */
   const [bi, setBi] = useState<{
@@ -145,7 +150,9 @@ export function InternetBackup() {
   }
 
   const loadBackup = useCallback(() => {
-    api.get<BackupAps>('/api/local/backup-aps').then(setBackup).catch(() => {})
+    api.get<BackupAps>('/api/local/backup-aps')
+      .then((b) => { setBackup(b); setBackupFailed(false) })
+      .catch(() => setBackupFailed(true))
     api.get<Discovery>('/api/local/backup-aps/discover')
       .then((r) => setFound(r?.ssids ?? []))
       .catch(() => setFound([]))
@@ -306,9 +313,14 @@ export function InternetBackup() {
               {backup ? (
               <div className="rounded-md border border-[var(--color-line)]
                               bg-[var(--color-surface-2)] p-3">
-                <div className="mb-3 border-b border-[var(--color-line)] pb-2">
-                  <span className="micro-label">{t('local_control.backup_use')}</span>
-                </div>
+                {/* The heading names the list, so it comes with one: over
+                    "No backup networks configured." it was a title for
+                    nothing. */}
+                {backup.credentials.length > 0 && (
+                  <div className="mb-3 border-b border-[var(--color-line)] pb-2">
+                    <span className="micro-label">{t('local_control.backup_use')}</span>
+                  </div>
+                )}
                 {backup.credentials.length ? (
                   <ul className="grid gap-1">
                     {backup.credentials.map((c, i) => (
@@ -487,8 +499,10 @@ export function InternetBackup() {
                   </form>
                 )}
               </div>
-              ) : (
+              ) : backupFailed ? (
                 <p className="text-[13px] text-[var(--color-ink-3)]">{t('local_control.not_loaded')}</p>
+              ) : (
+                <p aria-busy="true" className="text-[13px]"><Skeleton w="14rem" /></p>
               )}
             </div>
           )}
