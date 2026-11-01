@@ -11,7 +11,7 @@ RUN npx vite build --outDir /out --emptyOutDir
 
 # ---- python deps ----------------------------------------------------------
 # Built per target arch so grpcio and cryptography resolve the right wheels.
-FROM python:3.14-slim-bookworm AS deps
+FROM python:3.15-slim-bookworm AS deps
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1
 WORKDIR /src
 COPY app/backend/pyproject.toml app/backend/requirements.txt app/backend/hatch_build.py ./
@@ -25,7 +25,7 @@ RUN python -m venv /venv \
  && /venv/bin/pip install --no-deps .
 
 # ---- runtime --------------------------------------------------------------
-FROM python:3.14-slim-bookworm AS runtime
+FROM python:3.15-slim-bookworm AS runtime
 LABEL org.opencontainers.image.title="Eeronaut" \
       org.opencontainers.image.description="Web interface for eero mesh networks" \
       org.opencontainers.image.licenses="AGPL-3.0-only"
