@@ -698,13 +698,13 @@ input[type="radio"]:disabled {
   left: 0;
   width: 40%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  animation: plus-sheen 6s ease-in-out infinite;
+  animation: plus-sheen 3.5s ease-in-out infinite;
   pointer-events: none;
 }
-/* Most of the cycle is the wait. A sheen that never stops moving is a
+/* Half the cycle is the wait. A sheen that never stops moving is a
    loading bar, which is not what this is. */
 @keyframes plus-sheen {
-  0%, 70% { transform: translateX(-120%) skewX(-20deg); }
+  0%, 50% { transform: translateX(-120%) skewX(-20deg); }
   100% { transform: translateX(260%) skewX(-20deg); }
 }
 @media (prefers-reduced-motion: reduce) {
