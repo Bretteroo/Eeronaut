@@ -93,6 +93,14 @@ button::-moz-focus-inner { border: 0; padding: 0; }
   outline-offset: 2px;
   border-radius: 3px;
 }
+/* No ring on what only the code focuses (tabindex -1). A drawer, a dialog, or
+   an open list takes focus when it opens so the keyboard lands inside it, and
+   the browser sometimes counted that as keyboard focus and ringed the whole
+   panel, a blue line a little way off the drawer's edge. More specific than a
+   theme's own :focus-visible, so it holds in every theme. */
+[tabindex="-1"]:focus-visible {
+  outline: none;
+}
 
 .micro-label {
   font-size: 11px;
