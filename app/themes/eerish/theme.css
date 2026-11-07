@@ -65,18 +65,6 @@
   --color-rail-2: #263272;
   --color-rail-ink-dim: #7d87b3;
 
-  /* Chrome, for the one badge that wears it: silver along both rims and a
-     white band of light through the middle, which is how a curved piece of
-     metal catches the sky — brightest where it faces you, graying as it
-     turns away at the top and the bottom. The stops are what make it metal
-     rather than a gradient; the range sits high, so it reads as a white
-     badge with a metal edge rather than as a gray one. */
-  --chrome: linear-gradient(180deg, #c6cdd8 0%, #e2e7ee 12%, #fbfcfe 40%,
-                            #ffffff 50%, #fbfcfe 60%, #e2e7ee 88%,
-                            #c6cdd8 100%);
-  --chrome-rim: rgba(84, 96, 116, 0.38);
-  --chrome-ink: #23282f;
-
   --radius-card: 20px;
   /* Every control wears this, so they cannot drift apart: large enough to
      round any of them fully, which turns a short one into eero's pill and a
@@ -684,86 +672,45 @@ input[type="radio"]:disabled {
 
 /* ------------------------------------------------------- the plus badge
 
-   The one place the interface says a paid tier is in force. eero's own site
-   would not draw that as a hollow outline, so here it is a solid pill with a
-   little depth: a top highlight, a shadow under the lower edge, and a glint
-   that travels around its rim every few seconds and is absent the rest of
-   the time. The badge that says there is no subscription keeps the quiet
-   outline it has — there is nothing to celebrate. */
+   The one place the interface says a paid tier is in force, so it is a solid
+   gold pill rather than a hollow outline, with a band of light that crosses
+   it every few seconds and is absent the rest of the time. The gold, the ink,
+   and the sheen match the download button on Sheddit's site. The badge that
+   says there is no subscription keeps the quiet outline it has: there is
+   nothing to celebrate. */
 [data-part="plus-status"][data-active] {
   position: relative;
+  overflow: hidden;
   isolation: isolate;
-  border-color: var(--chrome-rim) !important;
-  color: var(--chrome-ink) !important;
+  border-color: transparent !important;
+  color: #2b1a02 !important;
   font-weight: 600;
-  /* Stamped into the metal rather than printed on it: a light edge under
-     the letters is what the eye reads as engraving, and it lifts the words
-     off the darkest band of the gradient. */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
-  /* Polished metal rather than paint: light at the top, a dark band where
-     the curve turns away, and a second light edge under it. Five stops,
-     because chrome is the horizon reflected in something round — two would
-     be a gradient and would read as one. */
-  background-image: var(--chrome);
-  /* Cool at both edges, since both are metal turning away. */
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55),
-              inset 0 -1px 0 rgba(84, 96, 116, 0.26),
-              0 1px 2px rgba(14, 15, 15, 0.18);
+  background: linear-gradient(180deg, #ffd37a, #f0a926) border-box;
+  box-shadow: 0 3px 10px rgba(240, 160, 40, 0.35);
 }
-/* The state dot stays the interface's own green: on metal it is the one
-   thing saying which state this is, and it has the contrast for it. */
-/* Two sheens, and the rim only: the ring is what is left of a padded box
-   once its own middle is masked out of it, and a sheen sweeps across that.
-   The badge has two pseudo-elements and this uses both — one bright and
-   narrow going one way, one softer and wider going the other, on periods
-   that do not divide into each other, so they cross at a different place
-   every time instead of beating in step. */
-[data-part="plus-status"][data-active]::before,
+/* The state dot stays the interface's own green: on gold it is the one
+   thing saying which state this is. */
 [data-part="plus-status"][data-active]::after {
   content: "";
   position: absolute;
-  inset: 0;
-  padding: 1.5px;
-  border-radius: inherit;
-  background-size: 320% 100%;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: plus-sheen 6s ease-in-out infinite;
   pointer-events: none;
-}
-/* `background-image`, not `background`: the shorthand would reset the
-   `background-size` set above it, and a sheen the size of the badge has
-   nowhere to travel — which is exactly what happened, and the badge sat
-   still. */
-[data-part="plus-status"][data-active]::after {
-  background-image: linear-gradient(100deg, rgba(255, 255, 255, 0) 42%,
-                                    rgba(255, 255, 255, 1) 50%,
-                                    rgba(255, 255, 255, 0) 58%);
-  animation: plus-glint 6s ease-in-out infinite;
-}
-[data-part="plus-status"][data-active]::before {
-  background-image: linear-gradient(80deg, rgba(255, 255, 255, 0) 30%,
-                                    rgba(255, 255, 255, 0.7) 50%,
-                                    rgba(255, 255, 255, 0) 70%);
-  animation: plus-glint-back 7.4s ease-in-out infinite;
 }
 /* Most of the cycle is the wait. A sheen that never stops moving is a
    loading bar, which is not what this is. */
-@keyframes plus-glint {
-  0%, 62% { background-position: 170% 0; }
-  100% { background-position: -70% 0; }
-}
-/* The other way, and slower to start: the two are never traveling
-   together for long. */
-@keyframes plus-glint-back {
-  0%, 70% { background-position: -70% 0; }
-  100% { background-position: 170% 0; }
+@keyframes plus-sheen {
+  0%, 70% { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(260%) skewX(-20deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-part="plus-status"][data-active]::before,
   [data-part="plus-status"][data-active]::after {
     animation: none;
+    display: none;
   }
 }
 
