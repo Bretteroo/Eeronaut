@@ -180,6 +180,7 @@
   "clients.filter_offline": "Frakoblet",
   "clients.filter_online": "Tilkoblet",
   "clients.filter_paused": "På pause",
+  "clients.focus_gone": "Denne enheten er ikke lenger i eeros klientliste.",
   "clients.ip_address": "IP-adresse",
   "clients.no_address_recorded": "Ingen adresse registrert.",
   "clients.no_clients_match_filter_offline": "Ingen klienter passer med det filteret. Frakoblede klienter skjules av Tilkoblet-filteret, og blokkerte av alle filtre unntatt Blokkert.",

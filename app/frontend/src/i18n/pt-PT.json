@@ -180,6 +180,7 @@
   "clients.filter_offline": "Desligados",
   "clients.filter_online": "Ligados",
   "clients.filter_paused": "Em pausa",
+  "clients.focus_gone": "Esse dispositivo já não está na lista de clientes do eero.",
   "clients.ip_address": "Endereço IP",
   "clients.no_address_recorded": "Nenhum endereço registado.",
   "clients.no_clients_match_filter_offline": "Nenhum cliente corresponde a esse filtro. O filtro «Ligados» oculta os clientes desligados, e todos os filtros exceto «Bloqueados» ocultam os bloqueados.",

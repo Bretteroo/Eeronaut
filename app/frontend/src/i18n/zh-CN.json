@@ -180,6 +180,7 @@
   "clients.filter_offline": "离线",
   "clients.filter_online": "在线",
   "clients.filter_paused": "已暂停",
+  "clients.focus_gone": "该设备已不在 eero 的客户端列表中。",
   "clients.ip_address": "IP 地址",
   "clients.no_address_recorded": "没有地址记录。",
   "clients.no_clients_match_filter_offline": "没有符合该筛选条件的客户端。“在线”筛选会隐藏离线客户端，除“已屏蔽”外的所有筛选都会隐藏已屏蔽的客户端。",

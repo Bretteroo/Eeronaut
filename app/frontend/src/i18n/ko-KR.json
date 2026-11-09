@@ -180,6 +180,7 @@
   "clients.filter_offline": "오프라인",
   "clients.filter_online": "온라인",
   "clients.filter_paused": "일시 중지됨",
+  "clients.focus_gone": "이 기기는 더 이상 eero 클라이언트 목록에 없습니다.",
   "clients.ip_address": "IP 주소",
   "clients.no_address_recorded": "기록된 주소가 없습니다.",
   "clients.no_clients_match_filter_offline": "필터와 일치하는 클라이언트가 없습니다. 오프라인 클라이언트는 온라인 필터에서, 차단된 클라이언트는 차단됨 필터를 제외한 모든 필터에서 숨겨집니다.",

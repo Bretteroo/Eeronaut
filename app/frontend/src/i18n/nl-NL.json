@@ -180,6 +180,7 @@
   "clients.filter_offline": "Offline",
   "clients.filter_online": "Online",
   "clients.filter_paused": "Gepauzeerd",
+  "clients.focus_gone": "Dit apparaat staat niet meer in de apparatenlijst van eero.",
   "clients.ip_address": "IP-adres",
   "clients.no_address_recorded": "Geen adres geregistreerd.",
   "clients.no_clients_match_filter_offline": "Geen apparaten die aan dat filter voldoen. Offline apparaten worden verborgen door het filter Online, en geblokkeerde door elk filter behalve Geblokkeerd.",

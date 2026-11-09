@@ -180,6 +180,7 @@
   "clients.filter_offline": "Odpojení",
   "clients.filter_online": "Připojení",
   "clients.filter_paused": "Pozastavení",
+  "clients.focus_gone": "Toto zařízení už v seznamu klientů eero není.",
   "clients.ip_address": "IP adresa",
   "clients.no_address_recorded": "Žádná adresa nebyla zaznamenána.",
   "clients.no_clients_match_filter_offline": "Filtru neodpovídají žádní klienti. Odpojené klienty skrývá filtr Připojení a zablokované všechny filtry kromě filtru Zablokovaní.",

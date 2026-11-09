@@ -9,6 +9,7 @@ import { ClientDetail } from '../components/ClientDetail'
 import { DeviceIcon } from '../components/DeviceIcon'
 import { bandOf } from '../lib/format'
 import { prefetchProfiles } from '../lib/profiles'
+import { pushAlert } from '../lib/alerts'
 import { t } from '../i18n'
 
 interface Device {
@@ -45,6 +46,9 @@ export function Clients() {
   const [detailKey, setDetailKey] = useState(0)
   const [busy, setBusy] = useState<string | null>(null)
   const [selectedMac, setSelectedMac] = useState<string | null>(null)
+  /* Whether both lists have come back from eero since the page opened, so
+     a client missing from them is missing rather than not yet loaded. */
+  const [fresh, setFresh] = useState(false)
   // Derived rather than snapshotted, so a rename in the drawer is
   // reflected in its own title.
   /* Both lists. A blocked client is not in `rows` at all — eero returns it
@@ -65,14 +69,15 @@ export function Clients() {
     : null
 
   const load = useCallback(() => {
-    api.get<Device[]>('/api/devices').then((d) => setRows(d ?? []))
+    const devices = api.get<Device[]>('/api/devices').then((d) => setRows(d ?? []))
       .catch((e) => setErr(e.message))
       // The count is left off the title until this resolves. `rows` starts
       // empty, so the header read "Clients (0)" for as long as the fetch
       // took — a claim that the network has no clients on it.
       .finally(() => setLoaded(true))
-    api.get<Device[]>('/api/devices/blocked').then((d) => setBlocked(d ?? []))
-      .catch(() => {})
+    const blockedRead = api.get<Device[]>('/api/devices/blocked')
+      .then((d) => setBlocked(d ?? [])).catch(() => {})
+    void Promise.allSettled([devices, blockedRead]).then(() => setFresh(true))
     // Reservations are not carried on the device objects, so they come from
     // the network's own list and are matched by MAC.
     api.get<{ mac?: string }[]>('/api/reservations')
@@ -92,22 +97,26 @@ export function Clients() {
 
      A handed-over client opens straight away. Without one — someone pasting
      the URL, say — it waits for the list, because a mac that names nothing on
-     this network should open nothing rather than an empty panel. */
+     this network should open nothing rather than an empty panel. The blocked
+     list counts too: a new device's notification is often followed by
+     blocking it, and its "See details" then opened nothing. Once both lists
+     are in and it is in neither, the page says so rather than sitting there
+     looking as though the link did nothing. */
   useEffect(() => {
     const mac = new URLSearchParams(window.location.search).get('focus')
     if (!mac) return
-    const known = (handed?.mac ?? '').toLowerCase() === mac.toLowerCase()
-      ? handed
-      : rows.find((d) => (d.mac ?? '').toLowerCase() === mac.toLowerCase())
-    if (!known) return
-    setSelectedMac(known.mac ?? null)
+    const same = (d: Device | null) => (d?.mac ?? '').toLowerCase() === mac.toLowerCase()
+    const known = same(handed) ? handed : [...rows, ...blocked].find(same)
+    if (!known && !fresh) return
+    if (known) setSelectedMac(known.mac ?? null)
+    else if (!err) pushAlert({ title: t('clients.focus_gone') })
     const url = new URL(window.location.href)
     url.searchParams.delete('focus')
     window.history.replaceState({}, '', url)
   /* The location's key as well: a link to ?focus= followed while this page is
      already open (a notification's "See details") is a new navigation to the
      same page, which changes nothing else this watches. */
-  }, [rows, handed, location.key])
+  }, [rows, blocked, handed, fresh, err, location.key])
 
   const blockedMacs = useMemo(
     () => new Set(blocked.map((b) => (b.mac ?? '').toLowerCase())), [blocked])

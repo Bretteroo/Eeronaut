@@ -180,6 +180,7 @@
   "clients.filter_offline": "Offline",
   "clients.filter_online": "Online",
   "clients.filter_paused": "Pausiert",
+  "clients.focus_gone": "Dieses Gerät ist nicht mehr in der Client-Liste von eero.",
   "clients.ip_address": "IP-Adresse",
   "clients.no_address_recorded": "Keine Adresse aufgezeichnet.",
   "clients.no_clients_match_filter_offline": "Keine Clients entsprechen diesem Filter. Offline-Clients blendet der Filter „Online“ aus, gesperrte Clients alle Filter außer „Gesperrt“.",

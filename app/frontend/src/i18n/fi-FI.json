@@ -180,6 +180,7 @@
   "clients.filter_offline": "Ei verkossa",
   "clients.filter_online": "Verkossa",
   "clients.filter_paused": "Tauolla",
+  "clients.focus_gone": "Laite ei ole enää eeron laiteluettelossa.",
   "clients.ip_address": "IP-osoite",
   "clients.no_address_recorded": "Osoitetta ei ole tallennettu.",
   "clients.no_clients_match_filter_offline": "Mikään laite ei vastaa suodatinta. Verkossa-suodatin piilottaa verkosta poissa olevat laitteet, ja estetyt laitteet näkyvät vain Estetyt-suodattimella.",

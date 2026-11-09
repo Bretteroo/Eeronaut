@@ -180,6 +180,7 @@
   "clients.filter_offline": "Не в мережі",
   "clients.filter_online": "У мережі",
   "clients.filter_paused": "Призупинені",
+  "clients.focus_gone": "Цього пристрою більше немає у списку клієнтів eero.",
   "clients.ip_address": "IP-адреса",
   "clients.no_address_recorded": "Адресу не записано.",
   "clients.no_clients_match_filter_offline": "Жоден клієнт не відповідає цьому фільтру. Фільтр «У мережі» приховує клієнтів, які не в мережі, а заблокованих приховують усі фільтри, крім «Заблоковані».",

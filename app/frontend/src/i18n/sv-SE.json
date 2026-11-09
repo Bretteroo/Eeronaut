@@ -180,6 +180,7 @@
   "clients.filter_offline": "Offline",
   "clients.filter_online": "Online",
   "clients.filter_paused": "Pausade",
+  "clients.focus_gone": "Enheten finns inte längre i eeros klientlista.",
   "clients.ip_address": "IP-adress",
   "clients.no_address_recorded": "Ingen adress registrerad.",
   "clients.no_clients_match_filter_offline": "Inga klienter matchar filtret. Offlineklienter döljs av filtret Online, och blockerade av alla filter utom Blockerade.",

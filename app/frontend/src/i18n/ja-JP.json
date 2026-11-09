@@ -180,6 +180,7 @@
   "clients.filter_offline": "オフライン",
   "clients.filter_online": "オンライン",
   "clients.filter_paused": "一時停止中",
+  "clients.focus_gone": "このデバイスは eero のクライアント一覧にもうありません。",
   "clients.ip_address": "IPアドレス",
   "clients.no_address_recorded": "アドレスの記録はありません。",
   "clients.no_clients_match_filter_offline": "そのフィルターに一致するクライアントはありません。オフラインのクライアントは「オンライン」フィルターでは非表示になり、ブロック中のクライアントは「ブロック中」以外のすべてのフィルターで非表示になります。",

@@ -180,6 +180,7 @@
   "clients.filter_offline": "Poza siecią",
   "clients.filter_online": "W sieci",
   "clients.filter_paused": "Wstrzymani",
+  "clients.focus_gone": "Tego urządzenia nie ma już na liście klientów eero.",
   "clients.ip_address": "Adres IP",
   "clients.no_address_recorded": "Brak zapisanego adresu.",
   "clients.no_clients_match_filter_offline": "Żaden klient nie pasuje do filtra. Filtr „W sieci” ukrywa klientów poza siecią, a zablokowanych ukrywają wszystkie filtry oprócz „Zablokowani”.",

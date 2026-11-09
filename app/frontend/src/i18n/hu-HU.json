@@ -180,6 +180,7 @@
   "clients.filter_offline": "Offline",
   "clients.filter_online": "Online",
   "clients.filter_paused": "Szüneteltetve",
+  "clients.focus_gone": "Ez az eszköz már nem szerepel az eero klienslistáján.",
   "clients.ip_address": "IP-cím",
   "clients.no_address_recorded": "Nincs rögzített cím.",
   "clients.no_clients_match_filter_offline": "Egy kliens sem felel meg ennek a szűrőnek. Az Online szűrő elrejti az offline klienseket, a Letiltva szűrőn kívül pedig minden szűrő elrejti a letiltottakat.",

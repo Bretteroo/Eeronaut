@@ -180,6 +180,7 @@
   "clients.filter_offline": "離線",
   "clients.filter_online": "線上",
   "clients.filter_paused": "已暫停",
+  "clients.focus_gone": "該裝置已不在 eero 的用戶端清單中。",
   "clients.ip_address": "IP 位址",
   "clients.no_address_recorded": "沒有位址記錄。",
   "clients.no_clients_match_filter_offline": "沒有符合此篩選條件的用戶端。「線上」篩選會隱藏離線的用戶端，而除了「已封鎖」以外的所有篩選都會隱藏已封鎖的用戶端。",
