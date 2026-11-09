@@ -111,6 +111,14 @@ function BackupDetail({ backup }: { backup: NonNullable<Item['backup']> }) {
 
 /** Where a new-device notification's "See details" goes: the Clients page
  *  with that device's drawer open, the way search opens one. */
+/** eero's text, ending in a full stop. It writes some of its sentences
+ *  without one ("A new device has joined <network>"), which read as cut off
+ *  next to the ones that have it. */
+const sentence = (text: string) => {
+  const s = text.trim()
+  return !s || /[.!?。！？]$/.test(s) ? s : `${s}.`
+}
+
 const detailsOf = (n: Item): string | null =>
   n.device_mac && (n.category === 'device.new' || n.category === 'device.restrict.new.private')
     ? `/clients?focus=${encodeURIComponent(n.device_mac)}` : null
@@ -201,7 +209,7 @@ export function Notifications({ as = 'bell' }: {
       const to = detailsOf(n)
       pushAlert({
         title: n.title || t('notifications.network_notification'),
-        body: n.body || undefined,
+        body: n.body ? sentence(n.body) : undefined,
         tone: 'info',
         link: to ? { label: t('notifications.see_details'), to } : undefined,
       })
@@ -313,14 +321,18 @@ export function Notifications({ as = 'bell' }: {
                 )}
                 <div className="min-w-0 flex-1">
                 {n.title && <p className="text-[13px] font-medium">{n.title}</p>}
-                {(n.body || detailsOf(n)) && (
+                {n.body && (
                   <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--color-ink-2)]">
-                    {n.body}
-                    {/* A new device's notification ends by opening that
-                        device, where its name, maker, and address are. */}
-                    {detailsOf(n) && <>{n.body ? ' ' : ''}<Link to={detailsOf(n)!}
-                      className="link" onClick={() => setOpen(false)}>
-                      {t('notifications.see_details')}</Link></>}
+                    {sentence(n.body)}
+                  </p>
+                )}
+                {/* A new device's notification ends by opening that device,
+                    where its name, maker, and address are: a line of its own
+                    under eero's sentence. */}
+                {detailsOf(n) && (
+                  <p className="mt-0.5 text-[13px] leading-relaxed">
+                    <Link to={detailsOf(n)!} className="link" onClick={() => setOpen(false)}>
+                      {t('notifications.see_details')}</Link>
                   </p>
                 )}
                 {n.backup && <BackupDetail backup={n.backup} />}

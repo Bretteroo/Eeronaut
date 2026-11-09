@@ -1130,7 +1130,7 @@
   "notifications.notifications": "Сповіщення",
   "notifications.notifications_unread": "Сповіщення, є непрочитані",
   "notifications.outage_cause": "Причина: {cause}",
-  "notifications.see_details": "Докладніше",
+  "notifications.see_details": "Докладніше.",
   "notifications.whats_new": "Що нового?",
   "period.1": "останні 24 години",
   "period.30": "останні 30 днів",

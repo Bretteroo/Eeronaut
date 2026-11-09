@@ -35,12 +35,17 @@ export function AlertHost() {
             onClick={() => dismiss(a.id)}
             className="text-[var(--color-ink-3)] hover:text-[var(--color-ink)]">×</button>
         </div>
-        {(a.body || a.link) && (
+        {a.body && (
           <p className="mt-0.5 text-[12px] leading-relaxed text-[var(--color-ink-2)]">
             {a.body}
-            {a.link && <>{a.body ? ' ' : ''}<Link to={a.link.to} className="link"
-              onClick={() => dismiss(a.id)}>
-              {a.link.label}</Link></>}
+          </p>
+        )}
+        {/* Under the body rather than run on after it, the way the
+            notifications drawer shows the same link. */}
+        {a.link && (
+          <p className="mt-0.5 text-[12px] leading-relaxed">
+            <Link to={a.link.to} className="link" onClick={() => dismiss(a.id)}>
+              {a.link.label}</Link>
           </p>
         )}
       </div>

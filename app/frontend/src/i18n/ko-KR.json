@@ -1094,7 +1094,7 @@
   "notifications.notifications": "알림",
   "notifications.notifications_unread": "알림, 읽지 않음",
   "notifications.outage_cause": "원인: {cause}",
-  "notifications.see_details": "자세히 보기",
+  "notifications.see_details": "자세히 보기.",
   "notifications.whats_new": "새로운 기능",
   "period.1": "최근 24시간",
   "period.30": "최근 30일",

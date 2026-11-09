@@ -1094,7 +1094,7 @@
   "notifications.notifications": "通知",
   "notifications.notifications_unread": "通知（未読あり）",
   "notifications.outage_cause": "原因：{cause}",
-  "notifications.see_details": "詳細を見る",
+  "notifications.see_details": "詳細を見る。",
   "notifications.whats_new": "新着情報",
   "period.1": "過去24時間",
   "period.30": "過去30日間",

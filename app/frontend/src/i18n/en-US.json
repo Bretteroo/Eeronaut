@@ -1065,7 +1065,7 @@
   "notifications.notifications": "Notifications",
   "notifications.notifications_unread": "Notifications, unread",
   "notifications.outage_cause": "Reason: {cause}",
-  "notifications.see_details": "See details",
+  "notifications.see_details": "See details.",
   "notifications.whats_new": "What's new?",
   "period.1": "the last 24 hours",
   "period.30": "the last 30 days",
